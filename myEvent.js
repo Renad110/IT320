@@ -2,7 +2,6 @@ const STORAGE_KEY = "myEvents";
 const CURRENT_TAB_KEY = "myEventsTab";
 
 const USER_NAME = "سارة الغامدي";
-
 const allEvents = [
 {
 id: 1,
