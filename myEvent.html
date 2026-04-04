@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>نفل - فعالياتي</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<header class="topbar">
+
+  <div class="topbar-inner">
+
+    <a href="home.html" class="brand">
+
+      <img src="logo.jpg" alt="نفل" />
+
+    </a>
+    <nav class="navbar-links">
+      <a href="home.html">الرئيسية</a>
+      <a href="myEvent.html" class="active">فعالياتي</a>
+      <a href="organized-events.html">فعالياتي المنظمة</a>
+    </nav>
+  </div>
+</header>
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-greeting">مرحباً بك 👋</div>
+    <h2>فعالياتي</h2>
+    <p>تابع الفعاليات المسجل فيها وأكد حضورك واستعرض شهادتك</p>
+  </div>
+</section>
+<main class="main">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="upcoming">القادمة</button>
+    <button class="tab-btn" data-tab="past">السابقة</button>
+    <button class="tab-btn" data-tab="completed">المكتملة</button>
+  </div>
+  <div class="events-grid" id="eventsGrid"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <h3>ما عندك فعاليات</h3>
+    <p>سجّل من صفحة الفعاليات وبتظهر لك هنا مباشرة</p>
+  </div>
+</main>
+<script src="myEvent.js"></script>
+</body>
+</html>
