@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>نفل - اكتشف الفعاليات</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: #f5f7f0; min-height: 100vh; color: #1f2937; }
+ 
+    /* ─── Header ─── */
+    header { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 50; }
+    .header-inner { max-width: 1200px; margin: 0 auto; padding: .75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+ 
+    .brand { display:flex; align-items:center; gap:.5rem; text-decoration:none; }
+    .brand img {
+      height: 52px; width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(45,106,53,0.2));
+    }
+ 
+    .header-right { display:flex; align-items:center; gap:.85rem; }
+ 
+    /* User chip */
+    .user-chip { display:flex; align-items:center; gap:.55rem; background:#f0fdf4; border:1.5px solid #bbf7d0; padding:.42rem .95rem; border-radius:99px; }
+    .user-avatar { width:30px; height:30px; border-radius:50%; background:#2d6a35; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.88rem; flex-shrink:0; }
+    .user-name { font-weight:600; font-size:.9rem; color:#1e4d25; }
+ 
+    /* Badge */
+    .badge-widget { display:flex; align-items:center; gap:.55rem; background:#fafafa; border:1px solid #e5e7eb; padding:.45rem .85rem; border-radius:.75rem; }
+    .badge-info { text-align:right; }
+    .badge-name { font-size:.8rem; font-weight:600; }
+    .badge-pts { font-size:.73rem; color:#6b7280; margin-top:.1rem; }
+    .progress-wrap { width:88px; height:5px; background:#e5e7eb; border-radius:99px; overflow:hidden; margin-top:.3rem; }
+    .progress-bar { height:100%; border-radius:99px; }
+ 
+    .btn-logout { display:flex; align-items:center; gap:.3rem; color:#dc2626; background:none; border:none; font-family:inherit; font-size:.86rem; font-weight:500; cursor:pointer; padding:.42rem .75rem; border-radius:.55rem; transition:background .2s; white-space:nowrap; }
+    .btn-logout:hover { background:#fef2f2; }
+ 
+    /* ─── Hero ─── */
+    .hero { background: linear-gradient(135deg, #2d6a35 0%, #1a4220 100%); color:#fff; padding: 2.5rem 1.5rem; }
+    .hero-inner { max-width:1200px; margin:0 auto; }
+    .hero-greeting { font-size:.92rem; color:#86efac; margin-bottom:.35rem; font-weight:500; }
+    .hero h2 { font-size:2rem; font-weight:700; margin-bottom:.45rem; }
+    .hero p { font-size:.97rem; color:#bbf7d0; }
+ 
+    /* ─── Main ─── */
+    .main { max-width:1200px; margin:0 auto; padding: 1.75rem 1.5rem 3rem; }
+ 
+    .search-card { background:#fff; border-radius:.9rem; box-shadow:0 2px 10px rgba(0,0,0,0.06); padding:1.3rem; margin-bottom:1.6rem; }
+    .search-wrap { position:relative; margin-bottom:1rem; }
+    .search-icon { position:absolute; right:1rem; top:50%; transform:translateY(-50%); color:#9ca3af; pointer-events:none; }
+    .search-input { width:100%; padding:.78rem 2.8rem .78rem 1rem; border:1.5px solid #d1d5db; border-radius:.65rem; font-family:inherit; font-size:.93rem; outline:none; background:#fafafa; transition:border-color .2s,box-shadow .2s; }
+    .search-input:focus { border-color:#2d6a35; box-shadow:0 0 0 3px rgba(45,106,53,0.1); background:#fff; }
+ 
+    .cats-label { color:#374151; font-weight:500; margin-bottom:.55rem; font-size:.88rem; }
+    .categories { display:flex; flex-wrap:wrap; gap:.4rem; }
+    .cat-btn { padding:.38rem .95rem; border-radius:99px; border:none; font-family:inherit; font-size:.83rem; cursor:pointer; background:#f3f4f6; color:#374151; transition:background .2s,color .2s; }
+    .cat-btn:hover { background:#e5e7eb; }
+    .cat-btn.active { background:#2d6a35; color:#fff; }
+ 
+    /* ─── Grid ─── */
+    .events-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(295px,1fr)); gap:1.3rem; }
+    .event-card { background:#fff; border-radius:.9rem; box-shadow:0 2px 8px rgba(0,0,0,0.07); overflow:hidden; cursor:pointer; transition:box-shadow .25s,transform .2s; text-decoration:none; color:inherit; display:block; }
+    .event-card:hover { box-shadow:0 8px 30px rgba(0,0,0,0.13); transform:translateY(-3px); }
+    .event-img { width:100%; height:182px; object-fit:cover; display:block; }
+    .event-body { padding:1.1rem; }
+    .event-meta { display:flex; align-items:center; justify-content:space-between; margin-bottom:.65rem; }
+    .cat-tag { background:#dcfce7; color:#166534; padding:.2rem .7rem; border-radius:99px; font-size:.78rem; font-weight:500; }
+    .pts-badge { display:flex; align-items:center; gap:.25rem; color:#ca8a04; font-size:.8rem; font-weight:500; }
+    .event-title { font-size:.98rem; font-weight:600; color:#1f2937; margin-bottom:.75rem; line-height:1.45; }
+    .event-details { display:flex; flex-direction:column; gap:.35rem; }
+    .detail-row { display:flex; align-items:center; gap:.42rem; color:#4b5563; font-size:.8rem; }
+    .detail-row svg { flex-shrink:0; color:#9ca3af; }
+    .btn-details { display:block; width:100%; margin-top:.9rem; padding:.6rem; background:#2d6a35; color:#fff; border:none; border-radius:.6rem; font-family:inherit; font-size:.9rem; font-weight:600; cursor:pointer; text-align:center; transition:background .2s; }
+    .btn-details:hover { background:#1e4d25; }
+    .no-results { text-align:center; padding:3rem 0; color:#6b7280; font-size:1rem; grid-column:1/-1; display:none; }
+ 
+    @media(max-width:640px){ .hero h2{font-size:1.5rem;} .badge-widget{display:none;} .user-name{display:none;} }
+  </style>
+</head>
+<body>
+ 
+<header>
+  <div class="header-inner">
+    <a href="home.html" class="brand">
+      <img src="logo.jpg" alt="نفل" />
+    </a>
+    <div class="header-right">
+      <div class="user-chip">
+        <div class="user-avatar">س</div>
+        <span class="user-name">سارة الغامدي</span>
+      </div>
+ 
+      <div class="badge-widget">
+        <div class="badge-info">
+          <div class="badge-name" style="color:#ca8a04">🥇 ذهبي</div>
+          <div class="badge-pts">72 / 100 نقطة</div>
+          <div class="progress-wrap">
+            <div class="progress-bar" style="width:72%;background:#ca8a04"></div>
+          </div>
+        </div>
+      </div>
+ 
+      <button class="btn-logout" onclick="window.location.href='login.html'">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        خروج
+      </button>
+    </div>
+  </div>
+</header>
+ 
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-greeting">مرحباً يا سارة 👋</div>
+    <h2>اكتشف الفعاليات البيئية</h2>
+    <p>شارك في بناء مستقبل أخضر لمدينة الرياض</p>
+  </div>
+</section>
+ 
+<main class="main">
+  <div class="search-card">
+    <div class="search-wrap">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" type="text" id="searchInput" placeholder="ابحث عن فعالية..." oninput="filterEvents()" />
+    </div>
+    <div class="cats-label">التصنيفات</div>
+    <div class="categories">
+      <button class="cat-btn active" onclick="setCategory(this,'الكل')">الكل</button>
+      <button class="cat-btn" onclick="setCategory(this,'تنظيف')">تنظيف</button>
+      <button class="cat-btn" onclick="setCategory(this,'زراعة')">زراعة</button>
+      <button class="cat-btn" onclick="setCategory(this,'إعادة تدوير')">إعادة تدوير</button>
+      <button class="cat-btn" onclick="setCategory(this,'توعية')">توعية</button>
+      <button class="cat-btn" onclick="setCategory(this,'معرض')">معرض</button>
+    </div>
+  </div>
+ 
+  <div class="events-grid" id="eventsGrid"></div>
+</main>
+ 
+<script>
+  const events = [
+    { id:1, title:'حملة تنظيف منتزه الملك عبدالله', category:'تنظيف', date:'2026-04-15', location:'الرياض، منتزه الملك عبدالله', participants:45, points:10, image:'https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?w=600&q=80' },
+    { id:2, title:'ورشة زراعة الأشجار في وادي حنيفة', category:'زراعة', date:'2026-04-20', location:'الرياض، وادي حنيفة', participants:32, points:15, image:'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=600&q=80' },
+    { id:3, title:'ورشة إعادة تدوير المخلفات', category:'إعادة تدوير', date:'2026-04-25', location:'الرياض، مركز الملك عبدالعزيز الثقافي', participants:28, points:12, image:'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600&q=80' },
+    { id:4, title:'حملة توعية بالطاقة المتجددة', category:'توعية', date:'2026-04-28', location:'الرياض، جامعة الملك سعود', participants:60, points:8, image:'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&q=80' },
+    { id:5, title:'يوم نظافة حي السفارات', category:'تنظيف', date:'2026-05-05', location:'الرياض، حي السفارات', participants:38, points:10, image:'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600&q=80' },
+    { id:6, title:'معرض الاستدامة البيئية', category:'معرض', date:'2026-05-10', location:'الرياض، مركز المعارض', participants:120, points:5, image:'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&q=80' }
+  ];
+ 
+  let currentCategory = 'الكل';
+ 
+  function setCategory(btn, cat) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCategory = cat;
+    filterEvents();
+  }
+ 
+  function filterEvents() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = events.filter(e => {
+      const matchCat = currentCategory === 'الكل' || e.category === currentCategory;
+      const matchQ = e.title.toLowerCase().includes(q);
+      return matchCat && matchQ;
+    });
+    renderEvents(filtered);
+  }
+ 
+  function renderEvents(list) {
+    const grid = document.getElementById('eventsGrid');
+    if (!list.length) {
+      grid.innerHTML = '<div class="no-results" style="display:block">لا توجد فعاليات تطابق البحث</div>';
+      return;
+    }
+    grid.innerHTML = list.map(e => `
+      <a class="event-card" href="ViewEvent.html?id=${e.id}">
+        <img class="event-img" src="${e.image}" alt="${e.title}" loading="lazy"/>
+        <div class="event-body">
+          <div class="event-meta">
+            <span class="cat-tag">${e.category}</span>
+            <span class="pts-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              ${e.points} نقطة
+            </span>
+          </div>
+          <div class="event-title">${e.title}</div>
+          <div class="event-details">
+            <div class="detail-row">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              ${e.date}
+            </div>
+            <div class="detail-row">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              ${e.location}
+            </div>
+            <div class="detail-row">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              ${e.participants} مشارك
+            </div>
+          </div>
+          <div class="btn-details">عرض التفاصيل</div>
+        </div>
+      </a>
+    `).join('');
+  }
+ 
+  renderEvents(events);
+</script>
+</body>
+</html>
