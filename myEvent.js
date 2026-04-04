@@ -141,8 +141,6 @@ return events.filter(event => isPast(event.date) && !event.attended);
 return events.filter(event => !isPast(event.date) && !event.attended);
 }
 
-/* ===== الشهادة ===== */
-
 function getCertificateHTML(event) {
 return `
 <div class="certificate">
@@ -200,8 +198,6 @@ win.document.close();
 win.print();
 }
 
-/* ===== الأزرار داخل الكارد ===== */
-
 function renderActions(event) {
 if (event.attended) {
 return `
@@ -249,8 +245,6 @@ return `
 `;
 }
 
-/* ===== الرسم ===== */
-
 function renderEvents() {
 const eventsGrid = document.getElementById("eventsGrid");
 const emptyState = document.getElementById("emptyState");
@@ -294,8 +288,6 @@ ${renderActions(event)}
 eventsGrid.appendChild(card);
 });
 }
-
-/* ===== المنطق ===== */
 
 function cancelRegistration(eventId) {
 const myEvents = getStoredMyEvents();
@@ -348,9 +340,6 @@ if (!certificateBox) return;
 certificateBox.style.display =
 certificateBox.style.display === "none" ? "block" : "none";
 }
-
-/* ===== التبويبات ===== */
-
 function setupTabs() {
 const tabButtons = document.querySelectorAll(".tab-btn");
 
