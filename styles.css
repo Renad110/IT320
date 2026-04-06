@@ -1404,3 +1404,268 @@ box-shadow: none;
 border: 3px solid #d4af37;
 }
 }
+.certificate {
+margin-top: 1rem;
+display: flex;
+justify-content: center;
+}
+
+.cert-border {
+background: linear-gradient(135deg, #ffffff, #f8fafc);
+border: 4px solid #d4af37;
+border-radius: 20px;
+padding: 2.5rem;
+width: 100%;
+max-width: 550px;
+text-align: center;
+box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+}
+
+.cert-logo {
+height: 85px;
+margin-bottom: 1rem;
+filter: drop-shadow(0 4px 10px rgba(0,0,0,0.1));
+}
+
+.cert-title {
+color: #1e4d25;
+font-size: 1.8rem;
+font-weight: 700;
+margin-bottom: .8rem;
+}
+
+.cert-text {
+color: #6b7280;
+margin-bottom: .4rem;
+font-size: .95rem;
+}
+
+.cert-name {
+font-size: 2rem;
+color: #2d6a35;
+font-weight: 800;
+margin: .7rem 0;
+border-bottom: 2px solid #d4af37;
+display: inline-block;
+padding-bottom: .2rem;
+}
+
+.cert-event {
+font-size: 1.2rem;
+margin-bottom: .5rem;
+color: #111827;
+}
+
+.cert-date {
+color: #9ca3af;
+margin-bottom: 1.2rem;
+}
+
+.signature {
+margin-top: 1.5rem;
+}
+
+.signature .line {
+width: 180px;
+height: 2px;
+background: #2d6a35;
+margin: 10px auto;
+}
+
+.signature span {
+font-size: .85rem;
+color: #374151;
+}
+
+.btn-print {
+background: #2d6a35;
+color: #fff;
+border: none;
+padding: .7rem 1.2rem;
+border-radius: .6rem;
+cursor: pointer;
+font-weight: 600;
+}
+
+.btn-print:hover {
+background: #1e4d25;
+transform: scale(1.03);
+}
+
+@media print {
+.btn-print {
+display: none;
+}
+
+.cert-border {
+box-shadow: none;
+border: 3px solid #d4af37;
+}
+}
+/* ===== Toast ===== */
+.toast {
+position: fixed;
+bottom: 24px;
+left: 50%;
+transform: translateX(-50%) translateY(20px);
+background: #1f2937;
+color: #fff;
+padding: 14px 22px;
+border-radius: 14px;
+font-size: .92rem;
+font-weight: 600;
+box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+opacity: 0;
+pointer-events: none;
+transition: .3s ease;
+z-index: 9999;
+}
+
+.toast.show {
+opacity: 1;
+transform: translateX(-50%) translateY(0);
+}
+
+.toast.success {
+background: linear-gradient(135deg, #2d6a35, #1e4d25);
+}
+
+.toast.error {
+background: linear-gradient(135deg, #dc2626, #991b1b);
+}
+
+/* ===== الشهادة ===== */
+.certificate {
+margin-top: 1rem;
+display: flex;
+justify-content: center;
+}
+
+.cert-border {
+position: relative;
+background: linear-gradient(180deg, #ffffff 0%, #f8fcf9 100%);
+border: 4px solid #b8d8bf;
+border-radius: 24px;
+padding: 2.6rem 2rem 2rem;
+width: 100%;
+max-width: 650px;
+text-align: center;
+box-shadow: 0 20px 50px rgba(32, 74, 49, 0.12);
+overflow: hidden;
+}
+
+.cert-top-pattern {
+position: absolute;
+top: 0;
+right: 0;
+left: 0;
+height: 14px;
+background: linear-gradient(90deg, #2d6a35, #7db88a, #2d6a35);
+}
+
+.cert-logo {
+height: 90px;
+margin-bottom: .8rem;
+filter: drop-shadow(0 4px 10px rgba(0,0,0,0.08));
+}
+
+.cert-small {
+color: #6b7280;
+font-size: .88rem;
+margin-bottom: .5rem;
+}
+
+.cert-title {
+color: #1e4d25;
+font-size: 2rem;
+font-weight: 800;
+margin-bottom: .8rem;
+}
+
+.cert-text {
+color: #5f6f67;
+margin-bottom: .45rem;
+font-size: 1rem;
+}
+
+.cert-name {
+font-size: 2.2rem;
+color: #245331;
+font-weight: 800;
+margin: .8rem 0;
+display: inline-block;
+padding: 0 .8rem .2rem;
+border-bottom: 3px solid #d8b44c;
+}
+
+.cert-event {
+font-size: 1.25rem;
+margin: .5rem 0 .7rem;
+color: #1f2937;
+font-weight: 700;
+}
+
+.cert-date {
+color: #7c8a83;
+margin-bottom: 1.2rem;
+font-size: .95rem;
+}
+
+.cert-divider {
+width: 100%;
+height: 1px;
+background: linear-gradient(90deg, transparent, #d9e8dc, transparent);
+margin: 1.4rem 0 1rem;
+}
+
+.cert-footer-row {
+display: flex;
+justify-content: space-between;
+align-items: end;
+gap: 1rem;
+flex-wrap: wrap;
+}
+
+.signature {
+text-align: center;
+}
+
+.signature .line {
+width: 160px;
+height: 2px;
+background: #2d6a35;
+margin: 10px auto;
+}
+
+.signature span {
+font-size: .9rem;
+color: #374151;
+}
+
+.cert-badge {
+background: #eef8f1;
+color: #245331;
+border: 1px solid #cfe5d4;
+padding: .6rem .9rem;
+border-radius: 999px;
+font-size: .85rem;
+font-weight: 700;
+}
+
+.btn-print {
+margin-top: 1.4rem;
+background: linear-gradient(135deg, #2d6a35, #1e4d25);
+color: #fff;
+border: none;
+padding: .8rem 1.3rem;
+border-radius: .75rem;
+cursor: pointer;
+font-weight: 700;
+font-family: inherit;
+transition: .2s ease;
+}
+
+.btn-print:hover {
+transform: translateY(-1px);
+box-shadow: 0 10px 20px rgba(30, 77, 37, 0.18);
+}
