@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>نفل - تعديل الفعالية</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .form-card {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      overflow: hidden;
+      animation: fadeUp .45s ease;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    .form-body { padding: 2rem; }
+
+    .pending-notice {
+      background: #fef9c3;
+      border: 1.5px solid #fde68a;
+      border-radius: .75rem;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: .75rem;
+    }
+    .pending-notice-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .pending-notice-text { font-size: .86rem; color: #4b5563; line-height: 1.65; }
+    .pending-notice-text strong { color: #854d0e; }
+
+    .form-group { margin-bottom: 1.1rem; }
+    label { display: block; color: #374151; font-weight: 600; font-size: .88rem; margin-bottom: .4rem; }
+    label span.req { color: #dc2626; }
+
+    input[type="text"], input[type="date"], input[type="time"],
+    input[type="tel"], input[type="number"], select, textarea {
+      width: 100%; padding: .78rem 1rem;
+      border: 1.5px solid #d1d5db; border-radius: .65rem;
+      font-family: inherit; font-size: .93rem; color: #111;
+      background: #fafafa; outline: none;
+      transition: border-color .2s, box-shadow .2s; appearance: none;
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: left 1rem center; padding-left: 2.5rem;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #2d6a35; box-shadow: 0 0 0 3px rgba(45,106,53,0.1); background: #fff;
+    }
+    textarea { resize: vertical; min-height: 110px; line-height: 1.7; }
+    .input-hint { font-size: .77rem; color: #9ca3af; margin-top: .3rem; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+    .section-divider {
+      font-size: .8rem; font-weight: 700; color: #9ca3af;
+      text-transform: uppercase; letter-spacing: .06em;
+      margin: 1.5rem 0 1rem;
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .section-divider::after { content:''; flex:1; height:1px; background:#f3f4f6; }
+
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .85rem 1rem; background: #f5f7f0; border-radius: .65rem;
+    }
+    .toggle-label { font-size: .9rem; font-weight: 500; color: #374151; }
+    .toggle-sub   { font-size: .78rem; color: #6b7280; margin-top: .1rem; }
+    .switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+    .switch input { opacity:0; width:0; height:0; }
+    .slider { position:absolute; inset:0; background:#d1d5db; border-radius:99px; cursor:pointer; transition:.3s; }
+    .slider::before { content:''; position:absolute; width:18px; height:18px; background:#fff; border-radius:50%; top:3px; right:3px; transition:.3s; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+    .switch input:checked + .slider { background:#2d6a35; }
+    .switch input:checked + .slider::before { transform:translateX(-20px); }
+
+    .pts-opt {
+      padding: .5rem 1.2rem; border-radius: 99px;
+      border: 1.5px solid #d1d5db; background: #fff;
+      font-family: inherit; font-size: .88rem; font-weight: 600;
+      cursor: pointer; color: #374151; transition: all .2s;
+    }
+    .pts-opt:hover { border-color: #2d6a35; color: #2d6a35; }
+    .pts-opt.active { background: #2d6a35; color: #fff; border-color: #2d6a35; }
+
+    .form-footer {
+      display: flex; gap: .8rem; justify-content: flex-end; align-items: center;
+      padding: 1.3rem 2rem;
+      border-top: 1px solid #f3f4f6;
+      background: #fafafa;
+      flex-wrap: wrap;
+    }
+    .btn-cancel-page {
+      padding: .72rem 1.5rem;
+      background: #f3f4f6; color: #374151;
+      border: none; border-radius: .65rem;
+      font-family: inherit; font-size: .92rem; font-weight: 600;
+      cursor: pointer; transition: background .2s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: .4rem;
+    }
+    .btn-cancel-page:hover { background: #e5e7eb; }
+    .btn-save {
+      padding: .72rem 2rem;
+      background: #2d6a35; color: #fff;
+      border: none; border-radius: .65rem;
+      font-family: inherit; font-size: .92rem; font-weight: 700;
+      cursor: pointer; transition: background .2s, transform .1s;
+      display: inline-flex; align-items: center; gap: .4rem;
+    }
+    .btn-save:hover { background: #1e4d25; }
+    .btn-save:active { transform: scale(.98); }
+
+    /* Success toast */
+    .toast {
+      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: #1e4d25; color: #fff;
+      padding: .8rem 1.5rem; border-radius: .75rem;
+      font-size: .9rem; font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      transition: transform .4s ease;
+      z-index: 999; white-space: nowrap;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    @media(max-width:640px){
+      .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
+      .form-body, .form-footer { padding: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="home.html" class="brand"><img src="logo.jpg" alt="نفل"/></a>
+    <nav class="navbar-links">
+      <a href="home.html">الرئيسية</a>
+      <a href="myEvent.html">فعالياتي</a>
+      <a href="organized-events.html" class="active">فعالياتي المنظمة</a>
+    </nav>
+    <div class="header-right">
+      <div class="user-chip">
+        <div class="user-avatar">س</div>
+        <span class="user-name">سارة الغامدي</span>
+      </div>
+      <button class="btn-logout" onclick="window.location.href='login.html'">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        خروج
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-greeting">فعالياتي المنظمة</div>
+    <h2>تعديل الفعالية</h2>
+    <p>عدّلي تفاصيل فعاليتك قبل اعتمادها من المشرف</p>
+  </div>
+</section>
+
+<main class="main">
+  <div class="form-card">
+    <div class="form-body">
+
+      <div class="pending-notice">
+        <div class="pending-notice-icon">⏳</div>
+        <div class="pending-notice-text">
+          هذه الفعالية <strong>قيد المراجعة</strong>. يمكنك تعديلها الآن.
+          بعد اعتماد الفعالية من المشرف، لن يمكن تعديلها.
+        </div>
+      </div>
+
+      <!-- Section 1 -->
+      <div class="section-divider">المعلومات الأساسية</div>
+
+      <div class="form-group">
+        <label for="eventTitle">عنوان الفعالية <span class="req">*</span></label>
+        <input type="text" id="eventTitle" value="ورشة زراعة الأشجار في وادي حنيفة"/>
+      </div>
+
+      <div class="form-group">
+        <label for="eventCategory">التصنيف <span class="req">*</span></label>
+        <select id="eventCategory">
+          <option>🧹 تنظيف</option>
+          <option selected>🌱 زراعة</option>
+          <option>♻️ إعادة تدوير</option>
+          <option>📢 توعية</option>
+          <option>🎪 معرض</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="eventDesc">وصف الفعالية <span class="req">*</span></label>
+        <textarea id="eventDesc">ورشة عمل لزراعة الأشجار في وادي حنيفة بالتعاون مع هيئة تطوير الرياض، تهدف إلى تعزيز التشجير وزيادة المساحات الخضراء في العاصمة.</textarea>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="section-divider">التاريخ والموقع</div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="eventDate">تاريخ الفعالية <span class="req">*</span></label>
+          <input type="date" id="eventDate" value="2026-04-20"/>
+        </div>
+        <div class="form-group">
+          <label for="targetAge">الفئة العمرية</label>
+          <select id="targetAge">
+            <option>أطفال</option>
+            <option>مراهقون</option>
+            <option selected>بالغون</option>
+            <option>الجميع</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row-3">
+        <div class="form-group">
+          <label for="startTime">وقت البداية</label>
+          <input type="time" id="startTime" value="08:00" onchange="calcHours()"/>
+        </div>
+        <div class="form-group">
+          <label for="endTime">وقت النهاية</label>
+          <input type="time" id="endTime" value="12:00" onchange="calcHours()"/>
+        </div>
+        <div class="form-group">
+          <label>ساعات التطوع</label>
+          <input type="number" id="volunteerHours" value="4" readonly/>
+          <div class="input-hint">تُحسب تلقائياً</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="eventLocation">الموقع <span class="req">*</span></label>
+        <input type="text" id="eventLocation" value="الرياض، وادي حنيفة"/>
+      </div>
+
+      <div class="form-group">
+        <label for="contactNumber">رقم التواصل</label>
+        <input type="tel" id="contactNumber" value="0501234567"/>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="section-divider">الإعدادات</div>
+
+      <div class="toggle-row" style="margin-bottom:.9rem">
+        <div>
+          <div class="toggle-label">🏅 شهادة حضور</div>
+          <div class="toggle-sub">المتطوعون يحصلون على شهادة بعد التحقق</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="certAvailable" checked/>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>نقاط المشاركة</label>
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+          <button type="button" class="pts-opt" data-val="5"  onclick="selectPoints(this)">5 نقاط</button>
+          <button type="button" class="pts-opt" data-val="8"  onclick="selectPoints(this)">8 نقاط</button>
+          <button type="button" class="pts-opt" data-val="10" onclick="selectPoints(this)">10 نقاط</button>
+          <button type="button" class="pts-opt active" data-val="15" onclick="selectPoints(this)">15 نقطة</button>
+        </div>
+        <input type="hidden" id="eventPoints" value="15"/>
+      </div>
+
+    </div>
+
+    <div class="form-footer">
+      <a href="organized-events.html" class="btn-cancel-page">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        إلغاء
+      </a>
+      <button class="btn-save" onclick="saveChanges()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        حفظ التعديلات
+      </button>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast">✅ تم حفظ التعديلات بنجاح</div>
+
+<script>
+  function calcHours() {
+    const s = document.getElementById('startTime').value;
+    const e = document.getElementById('endTime').value;
+    if (s && e && e > s) {
+      const diff = (new Date('2000-01-01T'+e) - new Date('2000-01-01T'+s)) / 3600000;
+      document.getElementById('volunteerHours').value = Math.round(diff*10)/10;
+    }
+  }
+  function selectPoints(btn) {
+    document.querySelectorAll('.pts-opt').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('eventPoints').value = btn.dataset.val;
+  }
+  function saveChanges() {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => {
+      t.classList.remove('show');
+      setTimeout(() => window.location.href = 'organized-events.html', 400);
+    }, 1800);
+  }
+</script>
+</body>
+</html>

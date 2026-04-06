@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>نفل - لوحة المشرف</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .admin-hero {
+      background: linear-gradient(135deg, #1e3a5f 0%, #0f2035 100%);
+    }
+
+    /* Summary cards */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem;
+      margin-bottom: 1.6rem;
+    }
+    .stat-card {
+      background: #fff; border-radius: .85rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      padding: 1.1rem 1.2rem;
+      display: flex; align-items: center; gap: .85rem;
+    }
+    .stat-icon {
+      width: 42px; height: 42px; border-radius: .6rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .stat-num   { font-size: 1.4rem; font-weight: 700; color: #1f2937; }
+    .stat-label { font-size: .76rem; color: #6b7280; margin-top: .1rem; }
+
+    /* Review card */
+    .review-card {
+      background: #fff; border-radius: .9rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      margin-bottom: 1.1rem;
+      overflow: hidden;
+      transition: box-shadow .25s;
+      animation: slideIn .35s ease;
+    }
+    @keyframes slideIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+    .review-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.1); }
+
+    .review-card-inner {
+      display: flex; gap: 0;
+    }
+    .review-img {
+      width: 150px; flex-shrink: 0; object-fit: cover;
+    }
+    .review-body {
+      padding: 1.2rem 1.4rem; flex: 1; display: flex; flex-direction: column; gap: .5rem;
+    }
+    .review-top {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: .6rem;
+    }
+    .review-title { font-size: 1rem; font-weight: 700; color: #1f2937; line-height: 1.45; }
+    .review-organizer { font-size: .82rem; color: #6b7280; }
+    .review-organizer span { color: #2d6a35; font-weight: 600; }
+    .review-desc {
+      font-size: .85rem; color: #4b5563; line-height: 1.65;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .review-meta {
+      display: flex; flex-wrap: wrap; gap: .5rem 1.1rem;
+    }
+    .review-meta-item {
+      display: flex; align-items: center; gap: .35rem;
+      font-size: .8rem; color: #6b7280;
+    }
+
+    /* Action bar */
+    .review-actions {
+      display: flex; gap: .6rem;
+      padding: .9rem 1.4rem;
+      border-top: 1px solid #f3f4f6;
+      background: #fafafa; align-items: center; flex-wrap: wrap;
+    }
+    .btn-approve {
+      padding: .55rem 1.4rem;
+      background: #2d6a35; color: #fff;
+      border: none; border-radius: .6rem;
+      font-family: inherit; font-size: .88rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: .4rem;
+      transition: background .2s, transform .1s;
+    }
+    .btn-approve:hover { background: #1e4d25; }
+    .btn-approve:active { transform: scale(.97); }
+    .btn-reject {
+      padding: .55rem 1.4rem;
+      background: #fef2f2; color: #dc2626;
+      border: 1.5px solid #fecaca; border-radius: .6rem;
+      font-family: inherit; font-size: .88rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: .4rem;
+      transition: background .2s;
+    }
+    .btn-reject:hover { background: #fee2e2; }
+    .btn-view-detail {
+      padding: .52rem 1rem;
+      background: #f0f9ff; color: #0369a1;
+      border: 1.5px solid #bae6fd; border-radius: .6rem;
+      font-family: inherit; font-size: .84rem; font-weight: 600;
+      cursor: pointer; margin-right: auto;
+      transition: background .2s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: .35rem;
+    }
+    .btn-view-detail:hover { background: #e0f2fe; }
+
+    /* Tabs */
+    .tabs { margin-bottom: 1.2rem; }
+
+    /* Section header */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1rem; flex-wrap: wrap; gap: .6rem;
+    }
+    .section-header h3 { font-size: 1rem; font-weight: 700; color: #1f2937; }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 999; opacity: 0; pointer-events: none; transition: opacity .3s;
+    }
+    .modal-overlay.show { opacity: 1; pointer-events: all; }
+    .modal-box {
+      background: #fff; border-radius: 1.1rem;
+      padding: 2rem; max-width: 400px; width: 90%;
+      text-align: center; transform: scale(.92);
+      transition: transform .3s; box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+    .modal-overlay.show .modal-box { transform: scale(1); }
+    .modal-icon { width: 62px; height: 62px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
+    .modal-title { font-size: 1.1rem; font-weight: 700; color: #1f2937; margin-bottom: .5rem; }
+    .modal-text  { color: #6b7280; font-size: .88rem; line-height: 1.65; margin-bottom: 1.3rem; }
+    .modal-btns  { display: flex; gap: .7rem; }
+    .modal-cancel  { flex:1; padding:.7rem; background:#f3f4f6; color:#374151; border:none; border-radius:.65rem; font-family:inherit; font-size:.9rem; font-weight:600; cursor:pointer; }
+    .modal-cancel:hover { background:#e5e7eb; }
+    .modal-approve { flex:1; padding:.7rem; background:#2d6a35; color:#fff; border:none; border-radius:.65rem; font-family:inherit; font-size:.9rem; font-weight:700; cursor:pointer; }
+    .modal-approve:hover { background:#1e4d25; }
+    .modal-reject  { flex:1; padding:.7rem; background:#dc2626; color:#fff; border:none; border-radius:.65rem; font-family:inherit; font-size:.9rem; font-weight:700; cursor:pointer; }
+    .modal-reject:hover  { background:#b91c1c; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(80px);
+      color: #fff; padding: .75rem 1.4rem; border-radius: .7rem;
+      font-size: .9rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      transition: transform .35s ease; z-index: 9999; white-space: nowrap;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.approved { background: #1e4d25; }
+    .toast.rejected { background: #991b1b; }
+
+    @media(max-width:768px){ .stats-row{grid-template-columns:repeat(2,1fr);} .review-img{display:none;} }
+    @media(max-width:480px){ .stats-row{grid-template-columns:1fr 1fr;} }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="home.html" class="brand"><img src="logo.jpg" alt="نفل"/></a>
+    <nav class="navbar-links">
+      <a href="home.html">الرئيسية</a>
+      <a href="admin-review.html" class="active">لوحة المشرف</a>
+    </nav>
+    <div class="header-right">
+      <div class="user-chip" style="background:#eff6ff;border-color:#bfdbfe">
+        <div class="user-avatar" style="background:#1e3a5f">م</div>
+        <span class="user-name" style="color:#1e3a5f">المشرف</span>
+      </div>
+      <button class="btn-logout" onclick="window.location.href='login.html'">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        خروج
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero admin-hero">
+  <div class="hero-inner">
+    <div class="hero-greeting">لوحة تحكم المشرف 🛡️</div>
+    <h2>مراجعة الفعاليات</h2>
+    <p>راجع الفعاليات المقدمة واعتمدها أو ارفضها</p>
+  </div>
+</section>
+
+<main class="main">
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#fef9c3">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div><div class="stat-num" id="sPending">4</div><div class="stat-label">قيد المراجعة</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#dcfce7">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2d6a35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div><div class="stat-num" id="sApproved">12</div><div class="stat-label">مُعتمدة</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#fee2e2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      </div>
+      <div><div class="stat-num" id="sRejected">3</div><div class="stat-label">مرفوضة</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#f5f3ff">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <div><div class="stat-num" id="sTotal">19</div><div class="stat-label">إجمالي الفعاليات</div></div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="section-header">
+    <h3>الفعاليات</h3>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="filterStatus(this,'pending')">⏳ قيد المراجعة</button>
+    <button class="tab-btn" onclick="filterStatus(this,'approved')">✅ مُعتمدة</button>
+    <button class="tab-btn" onclick="filterStatus(this,'rejected')">❌ مرفوضة</button>
+    <button class="tab-btn" onclick="filterStatus(this,'all')">الكل</button>
+  </div>
+
+  <div id="reviewList"></div>
+  <div class="empty-state" id="emptyState" style="display:none;padding:2.5rem">
+    <div style="font-size:2.5rem;margin-bottom:.6rem">📭</div>
+    <h3>لا توجد فعاليات</h3>
+    <p>لا توجد فعاليات في هذا التصنيف</p>
+  </div>
+</main>
+
+<!-- Approve modal -->
+<div class="modal-overlay" id="approveModal">
+  <div class="modal-box">
+    <div class="modal-icon" style="background:#dcfce7">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2d6a35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+    <div class="modal-title">اعتماد الفعالية</div>
+    <div class="modal-text">هل تريد اعتماد هذه الفعالية؟<br>ستظهر للمستخدمين فور الاعتماد.</div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('approveModal')">إلغاء</button>
+      <button class="modal-approve" onclick="confirmApprove()">اعتماد</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reject modal -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="modal-box">
+    <div class="modal-icon" style="background:#fee2e2">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    </div>
+    <div class="modal-title">رفض الفعالية</div>
+    <div class="modal-text">هل تريد رفض هذه الفعالية؟<br>لن تظهر للمستخدمين.</div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('rejectModal')">إلغاء</button>
+      <button class="modal-reject" onclick="confirmReject()">رفض</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const events = [
+    { id:1, status:'pending',  title:'حملة تنظيف منتزه الملك عبدالله',    organizer:'سارة الغامدي', category:'تنظيف',        date:'2026-04-15', location:'منتزه الملك عبدالله', points:10, participants:0, desc:'حملة لتنظيف المنتزه وجمع المخلفات بالتعاون مع المتطوعين.', image:'https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?w=300&q=80' },
+    { id:2, status:'pending',  title:'ورشة زراعة الأشجار في وادي حنيفة',   organizer:'نورة العتيبي', category:'زراعة',         date:'2026-04-20', location:'وادي حنيفة',          points:15, participants:0, desc:'ورشة عمل لزراعة الأشجار بهدف تعزيز التشجير في الرياض.', image:'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=300&q=80' },
+    { id:3, status:'pending',  title:'حملة توعية بالطاقة المتجددة',         organizer:'ريم الشمري',   category:'توعية',         date:'2026-04-28', location:'جامعة الملك سعود',   points:8,  participants:0, desc:'جلسة توعية بأهمية الطاقة الشمسية وطرق ترشيد الاستهلاك.',  image:'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=300&q=80' },
+    { id:4, status:'pending',  title:'يوم نظافة حي السفارات',               organizer:'هند القحطاني', category:'تنظيف',         date:'2026-05-05', location:'حي السفارات',        points:10, participants:0, desc:'فعالية لتنظيف حي السفارات وتوعية السكان بأهمية النظافة.',   image:'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=300&q=80' },
+    { id:5, status:'approved', title:'معرض الاستدامة البيئية',               organizer:'لجين الغامدي', category:'معرض',          date:'2026-05-10', location:'مركز المعارض',       points:5,  participants:120, desc:'معرض يضم مشاريع استدامة من جميع أنحاء المملكة.', image:'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=300&q=80' },
+    { id:6, status:'rejected', title:'ورشة إعادة تدوير المخلفات',           organizer:'دانة العنزي',  category:'إعادة تدوير',   date:'2026-04-25', location:'مركز الملك عبدالعزيز', points:12, participants:0, desc:'ورشة لتعليم طرق إعادة التدوير في المنزل.', image:'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=300&q=80' },
+  ];
+
+  let currentFilter = 'pending';
+  let actionTarget   = null;
+
+  const statusMap = {
+    pending:  { label:'قيد المراجعة', cls:'status-pending'  },
+    approved: { label:'مُعتمدة',      cls:'status-approved' },
+    rejected: { label:'مرفوضة',       cls:'status-rejected' },
+  };
+
+  function filterStatus(btn, status) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = status;
+    render();
+  }
+
+  function render() {
+    const list = currentFilter === 'all' ? events : events.filter(e => e.status === currentFilter);
+    const container = document.getElementById('reviewList');
+    const empty     = document.getElementById('emptyState');
+
+    if (!list.length) { container.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+
+    container.innerHTML = list.map(e => {
+      const s = statusMap[e.status];
+      return `
+      <div class="review-card" id="rcard-${e.id}">
+        <div class="review-card-inner">
+          <img class="review-img" src="${e.image}" alt="${e.title}"/>
+          <div class="review-body">
+            <div class="review-top">
+              <div>
+                <div class="review-title">${e.title}</div>
+                <div class="review-organizer">المنظم: <span>${e.organizer}</span></div>
+              </div>
+              <span class="status-badge ${s.cls}">${s.label}</span>
+            </div>
+            <div class="review-desc">${e.desc}</div>
+            <div class="review-meta">
+              <div class="review-meta-item">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                ${e.date}
+              </div>
+              <div class="review-meta-item">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                ${e.location}
+              </div>
+              <div class="review-meta-item" style="color:#2d6a35">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>
+                ${e.category}
+              </div>
+              <div class="review-meta-item" style="color:#ca8a04">⭐ ${e.points} نقطة</div>
+            </div>
+          </div>
+        </div>
+        <div class="review-actions">
+          <a href="ViewEvent.html?id=${e.id}" class="btn-view-detail">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            عرض التفاصيل
+          </a>
+          ${e.status === 'pending' ? `
+            <button class="btn-approve" onclick="openApprove(${e.id})">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              اعتماد
+            </button>
+            <button class="btn-reject" onclick="openReject(${e.id})">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              رفض
+            </button>
+          ` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function openApprove(id) { actionTarget = id; document.getElementById('approveModal').classList.add('show'); }
+  function openReject(id)  { actionTarget = id; document.getElementById('rejectModal').classList.add('show');  }
+  function closeModal(id)  { document.getElementById(id).classList.remove('show'); }
+
+  function confirmApprove() {
+    const e = events.find(x => x.id === actionTarget);
+    if (e) e.status = 'approved';
+    closeModal('approveModal');
+    updateStats();
+    render();
+    showToast('approved', '✅ تم اعتماد الفعالية بنجاح');
+  }
+  function confirmReject() {
+    const e = events.find(x => x.id === actionTarget);
+    if (e) e.status = 'rejected';
+    closeModal('rejectModal');
+    updateStats();
+    render();
+    showToast('rejected', '❌ تم رفض الفعالية');
+  }
+
+  function updateStats() {
+    document.getElementById('sPending').textContent  = events.filter(e=>e.status==='pending').length;
+    document.getElementById('sApproved').textContent = events.filter(e=>e.status==='approved').length;
+    document.getElementById('sRejected').textContent = events.filter(e=>e.status==='rejected').length;
+    document.getElementById('sTotal').textContent    = events.length;
+  }
+
+  function showToast(type, msg) {
+    const t = document.getElementById('toast');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  render();
+</script>
+</body>
+</html>

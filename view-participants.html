@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>نفل - المشاركون</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .page-card {
+      background: #fff; border-radius: 1rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      overflow: hidden; animation: fadeUp .45s ease;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
+
+    /* Event summary banner */
+    .event-banner {
+      background: linear-gradient(135deg,#f0fdf4,#dcfce7);
+      border-bottom: 1px solid #bbf7d0;
+      padding: 1.2rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .event-banner-img {
+      width: 64px; height: 64px;
+      border-radius: .65rem; object-fit: cover; flex-shrink: 0;
+    }
+    .event-banner-info { flex: 1; }
+    .event-banner-title { font-size: 1rem; font-weight: 700; color: #1f2937; margin-bottom: .3rem; }
+    .event-banner-meta  { font-size: .82rem; color: #6b7280; display: flex; gap: .8rem; flex-wrap: wrap; }
+
+    /* Stats mini row */
+    .mini-stats {
+      display: flex; gap: .7rem; padding: 1rem 1.5rem;
+      border-bottom: 1px solid #f3f4f6; flex-wrap: wrap;
+    }
+    .mini-stat {
+      flex: 1; min-width: 100px;
+      background: #f5f7f0; border-radius: .65rem;
+      padding: .75rem 1rem; text-align: center;
+    }
+    .mini-stat-num   { font-size: 1.3rem; font-weight: 700; color: #1f2937; }
+    .mini-stat-label { font-size: .75rem; color: #6b7280; margin-top: .1rem; }
+
+    /* Search & filter bar */
+    .filter-bar {
+      padding: 1rem 1.5rem;
+      display: flex; gap: .7rem; align-items: center;
+      border-bottom: 1px solid #f3f4f6; flex-wrap: wrap;
+    }
+    .search-wrap { position: relative; flex: 1; min-width: 200px; }
+    .search-wrap svg { position: absolute; right: .9rem; top: 50%; transform: translateY(-50%); color: #9ca3af; pointer-events: none; }
+    .search-wrap input {
+      width: 100%; padding: .62rem 2.6rem .62rem .9rem;
+      border: 1.5px solid #d1d5db; border-radius: .6rem;
+      font-family: inherit; font-size: .88rem; outline: none;
+      background: #fafafa; transition: border-color .2s;
+    }
+    .search-wrap input:focus { border-color: #2d6a35; background: #fff; }
+
+    .filter-select {
+      padding: .62rem 2.2rem .62rem .9rem;
+      border: 1.5px solid #d1d5db; border-radius: .6rem;
+      font-family: inherit; font-size: .85rem; outline: none;
+      background: #fafafa; cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: left .7rem center;
+    }
+
+    /* Table */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: .88rem;
+    }
+    thead tr { background: #f5f7f0; }
+    th {
+      text-align: right; padding: .8rem 1.2rem;
+      font-size: .78rem; font-weight: 700; color: #6b7280;
+      text-transform: uppercase; letter-spacing: .04em;
+      white-space: nowrap; border-bottom: 1px solid #e5e7eb;
+    }
+    td {
+      padding: .9rem 1.2rem;
+      border-bottom: 1px solid #f3f4f6;
+      color: #374151; vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafafa; }
+
+    .participant-name {
+      display: flex; align-items: center; gap: .65rem;
+    }
+    .participant-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: #2d6a35; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .85rem; flex-shrink: 0;
+    }
+    .participant-name-text { font-weight: 600; color: #1f2937; }
+
+    .att-badge {
+      display: inline-flex; align-items: center; gap: .3rem;
+      padding: .22rem .7rem; border-radius: 99px;
+      font-size: .77rem; font-weight: 600;
+    }
+    .att-attended   { background: #dcfce7; color: #166534; }
+    .att-registered { background: #fef9c3; color: #854d0e; }
+
+    .pts-cell { color: #ca8a04; font-weight: 600; }
+
+    /* Attendance code box */
+    .code-panel {
+      margin: 1.2rem 1.5rem;
+      background: #f0fdf4;
+      border: 1.5px solid #bbf7d0;
+      border-radius: .85rem;
+      padding: 1.1rem 1.3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: .8rem;
+    }
+    .code-info { }
+    .code-label { font-size: .82rem; color: #166534; font-weight: 600; margin-bottom: .3rem; }
+    .code-value {
+      font-size: 1.6rem; font-weight: 800; color: #2d6a35;
+      letter-spacing: .15em; font-variant-numeric: tabular-nums;
+    }
+    .btn-copy {
+      padding: .55rem 1.2rem;
+      background: #2d6a35; color: #fff;
+      border: none; border-radius: .6rem;
+      font-family: inherit; font-size: .86rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: .4rem;
+      transition: background .2s;
+    }
+    .btn-copy:hover { background: #1e4d25; }
+
+    .toast {
+      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: #1e4d25; color: #fff; padding: .7rem 1.4rem;
+      border-radius: .7rem; font-size: .88rem; font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      transition: transform .35s ease; z-index: 999;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    .export-btn {
+      padding: .55rem 1.1rem;
+      background: #f5f7f0; color: #374151;
+      border: 1.5px solid #d1d5db; border-radius: .6rem;
+      font-family: inherit; font-size: .84rem; font-weight: 600;
+      cursor: pointer; display: inline-flex; align-items: center; gap: .4rem;
+      transition: background .2s;
+    }
+    .export-btn:hover { background: #e5e7eb; }
+
+    @media(max-width:640px){ th:nth-child(4),td:nth-child(4){ display:none; } }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="home.html" class="brand"><img src="logo.jpg" alt="نفل"/></a>
+    <nav class="navbar-links">
+      <a href="home.html">الرئيسية</a>
+      <a href="myEvent.html">فعالياتي</a>
+      <a href="organized-events.html" class="active">فعالياتي المنظمة</a>
+    </nav>
+    <div class="header-right">
+      <div class="user-chip">
+        <div class="user-avatar">س</div>
+        <span class="user-name">سارة الغامدي</span>
+      </div>
+      <button class="btn-logout" onclick="window.location.href='login.html'">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        خروج
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-greeting">فعالياتي المنظمة</div>
+    <h2>قائمة المشاركين</h2>
+    <p>تابعي المشاركين المسجلين وحالة حضورهم</p>
+  </div>
+</section>
+
+<main class="main">
+  <div class="page-card">
+
+    <!-- Event banner -->
+    <div class="event-banner">
+      <img class="event-banner-img" src="https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?w=200&q=80" alt=""/>
+      <div class="event-banner-info">
+        <div class="event-banner-title">حملة تنظيف منتزه الملك عبدالله</div>
+        <div class="event-banner-meta">
+          <span>📅 15 أبريل 2026</span>
+          <span>🕗 08:00 — 12:00</span>
+          <span>📍 منتزه الملك عبدالله، الرياض</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mini stats -->
+    <div class="mini-stats">
+      <div class="mini-stat">
+        <div class="mini-stat-num" id="totalCount">45</div>
+        <div class="mini-stat-label">إجمالي المسجلين</div>
+      </div>
+      <div class="mini-stat" style="background:#f0fdf4">
+        <div class="mini-stat-num" style="color:#2d6a35" id="attendedCount">32</div>
+        <div class="mini-stat-label">حضروا فعلاً</div>
+      </div>
+      <div class="mini-stat" style="background:#fef9c3">
+        <div class="mini-stat-num" style="color:#ca8a04" id="pendingCount">13</div>
+        <div class="mini-stat-label">لم يحضروا بعد</div>
+      </div>
+    </div>
+
+    <!-- Attendance code -->
+    <div class="code-panel">
+      <div class="code-info">
+        <div class="code-label">🔑 كود الحضور — شاركيه مع المشاركين في الفعالية</div>
+        <div class="code-value" id="attCode">7 4 2 9</div>
+      </div>
+      <button class="btn-copy" onclick="copyCode()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        نسخ الكود
+      </button>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="ابحث باسم المشارك..." oninput="filterTable(this.value)" id="searchInput"/>
+      </div>
+      <select class="filter-select" onchange="filterByAtt(this.value)">
+        <option value="all">الكل</option>
+        <option value="attended">حضروا</option>
+        <option value="registered">لم يحضروا</option>
+      </select>
+      <button class="export-btn" onclick="exportCSV()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        تصدير CSV
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table id="participantsTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>المشارك</th>
+            <th>تاريخ التسجيل</th>
+            <th>الحضور</th>
+            <th>النقاط</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+</main>
+
+<div class="toast" id="toast">✅ تم نسخ الكود</div>
+
+<script>
+  const participants = [
+    { name:'نورة العتيبي',    date:'2026-04-01', attended:true,  points:10 },
+    { name:'ريم الشمري',      date:'2026-04-02', attended:true,  points:10 },
+    { name:'لجين الغامدي',    date:'2026-04-02', attended:false, points:0  },
+    { name:'هند القحطاني',    date:'2026-04-03', attended:true,  points:10 },
+    { name:'سارة الدوسري',    date:'2026-04-03', attended:true,  points:10 },
+    { name:'منال الزهراني',   date:'2026-04-04', attended:false, points:0  },
+    { name:'دانة العنزي',     date:'2026-04-05', attended:true,  points:10 },
+    { name:'رنا السلمان',     date:'2026-04-05', attended:true,  points:10 },
+    { name:'أريج الحربي',     date:'2026-04-06', attended:false, points:0  },
+    { name:'لين المقحم',      date:'2026-04-06', attended:true,  points:10 },
+  ];
+
+  let attFilter = 'all';
+  let searchVal = '';
+
+  function initials(name) {
+    return name.charAt(0);
+  }
+
+  function renderTable() {
+    let list = participants.filter(p => {
+      const matchSearch = p.name.includes(searchVal);
+      const matchAtt = attFilter === 'all'
+        || (attFilter === 'attended'   &&  p.attended)
+        || (attFilter === 'registered' && !p.attended);
+      return matchSearch && matchAtt;
+    });
+
+    const tbody = document.getElementById('tableBody');
+    if (!list.length) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#9ca3af;padding:2rem">لا توجد نتائج</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = list.map((p, i) => `
+      <tr>
+        <td style="color:#9ca3af;font-size:.8rem">${i+1}</td>
+        <td>
+          <div class="participant-name">
+            <div class="participant-avatar">${initials(p.name)}</div>
+            <span class="participant-name-text">${p.name}</span>
+          </div>
+        </td>
+        <td style="color:#6b7280;font-size:.82rem">${p.date}</td>
+        <td>
+          <span class="att-badge ${p.attended ? 'att-attended' : 'att-registered'}">
+            ${p.attended ? '✅ حضر' : '⏳ مسجل'}
+          </span>
+        </td>
+        <td class="pts-cell">${p.points > 0 ? p.points + ' ⭐' : '—'}</td>
+      </tr>
+    `).join('');
+  }
+
+  function filterTable(val) { searchVal = val; renderTable(); }
+  function filterByAtt(val) { attFilter = val; renderTable(); }
+
+  function copyCode() {
+    navigator.clipboard.writeText('7429').catch(()=>{});
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  function exportCSV() {
+    const rows = [['الاسم','تاريخ التسجيل','الحضور','النقاط']];
+    participants.forEach(p => rows.push([p.name, p.date, p.attended?'حضر':'مسجل', p.points]));
+    const csv = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'participants.csv'; a.click();
+  }
+
+  renderTable();
+</script>
+</body>
+</html>
