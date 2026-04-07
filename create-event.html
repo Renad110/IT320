@@ -178,7 +178,9 @@
             <select id="targetAge">
               <option>الجميع</option>
               <option>أطفال</option>
+              <option>مراهقين</option>
               <option>بالغون</option>
+
             </select>
           </div>
         </div>
@@ -194,8 +196,16 @@
           </div>
           <div class="form-group">
             <label>ساعات التطوع</label>
-            <input type="number" id="volunteerHours" value="0" readonly style="background:#f3f4f6;"/>
-          </div>
+          <input 
+           type="number" 
+           id="volunteerHours" 
+           value="1"
+           min="1"
+           step="1"
+             style="background:#f3f4f6;"
+            onkeydown="return false;"
+              />        
+			  </div>
         </div>
 
         <div class="form-group">
