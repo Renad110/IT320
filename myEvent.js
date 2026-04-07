@@ -5,7 +5,6 @@ const USER_NAME = "سارة الغامدي";
 const DEMO_MODE = true;
 const DEMO_TODAY_EVENT_ID = 1;
 
-/* أكواد الحضور الثابتة في هالفيز */
 const EVENT_CODES = {
 1: "9247"
 };
