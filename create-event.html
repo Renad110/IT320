@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>نفل - إنشاء فعالية جديدة</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .form-card {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      overflow: hidden;
+      animation: fadeUp .45s ease;
+      max-width: 850px;
+      margin: 2rem auto;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    .form-body { padding: 2rem; }
+
+    .form-group { margin-bottom: 1.1rem; }
+    label { display: block; color: #374151; font-weight: 600; font-size: .88rem; margin-bottom: .4rem; }
+    label span.req { color: #dc2626; }
+
+    input[type="text"], input[type="date"], input[type="time"],
+    input[type="tel"], input[type="number"], select, textarea {
+      width: 100%; padding: .78rem 1rem;
+      border: 1.5px solid #d1d5db; border-radius: .65rem;
+      font-family: inherit; font-size: .93rem; color: #111;
+      background: #fafafa; outline: none;
+      transition: border-color .2s, box-shadow .2s; appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #2d6a35; box-shadow: 0 0 0 3px rgba(45,106,53,0.1); background: #fff;
+    }
+
+    .image-upload-wrapper {
+      border: 2px dashed #d1d5db;
+      border-radius: .8rem;
+      padding: 2rem;
+      text-align: center;
+      background: #fafafa;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 0.5rem;
+    }
+    .image-upload-wrapper:hover { border-color: #2d6a35; background: #f0fdf4; }
+    .upload-icon { font-size: 2rem; color: #9ca3af; margin-bottom: 0.5rem; }
+    .preview-container img {
+      max-width: 100%; border-radius: .6rem; margin-top: 1rem; display: none;
+      max-height: 200px; object-fit: cover;
+    }
+
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+    .section-divider {
+      font-size: .8rem; font-weight: 700; color: #9ca3af;
+      margin: 1.5rem 0 1rem;
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .section-divider::after { content:''; flex:1; height:1px; background:#f3f4f6; }
+
+    .btn-submit-custom {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #2d6a35;
+      color: #ffffff;
+      padding: 12px 38px;
+      border-radius: 16px; 
+      border: none;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-submit-custom:hover { background-color: #1e4d25; transform: translateY(-1px); }
+
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .85rem 1rem; background: #f5f7f0; border-radius: .65rem;
+    }
+    .switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+    .switch input { opacity:0; width:0; height:0; }
+    .slider { position:absolute; inset:0; background:#d1d5db; border-radius:99px; cursor:pointer; transition:.3s; }
+    .slider::before { content:''; position:absolute; width:18px; height:18px; background:#fff; border-radius:50%; top:3px; right:3px; transition:.3s; }
+    .switch input:checked + .slider { background:#2d6a35; }
+    .switch input:checked + .slider::before { transform:translateX(-20px); }
+
+    .pts-opt {
+      padding: .5rem 1.2rem; border-radius: 99px; border: 1.5px solid #d1d5db; background: #fff;
+      cursor: pointer; transition: all .2s; font-size: .88rem; font-weight: 600;
+    }
+    .pts-opt.active { background: #2d6a35; color: #fff; border-color: #2d6a35; }
+
+    .form-footer {
+      display: flex; gap: .8rem; justify-content: flex-end; align-items: center;
+      padding: 1.3rem 2rem; border-top: 1px solid #f3f4f6; background: #fafafa;
+    }
+
+    @media(max-width:640px){ .form-row-2, .form-row-3 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="home.html" class="brand"><img src="logo.jpg" alt="نفل"/></a>
+    <nav class="navbar-links">
+      <a href="home.html">الرئيسية</a>
+      <a href="myEvent.html">فعالياتي</a>
+      <a href="organized-events.html" class="active">فعالياتي المنظمة</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-greeting">إنشاء فعالية</div>
+    <h2>إضافة فعالية جديدة</h2>
+    <p>املئي البيانات أدناه لإرسال فعاليتك للمراجعة والاعتماد</p>
+  </div>
+</section>
+
+<main class="main">
+  <div class="form-card">
+    <form id="createEventForm" onsubmit="event.preventDefault(); submitToAdmin();">
+      <div class="form-body">
+
+        <div class="section-divider">المعلومات الأساسية</div>
+
+        <div class="form-group">
+          <label for="eventTitle">عنوان الفعالية <span class="req">*</span></label>
+          <input type="text" id="eventTitle" placeholder="مثلاً: مبادرة تنظيف منتزه الملك سلمان" required/>
+        </div>
+
+        <div class="form-group">
+          <label for="eventCategory">التصنيف <span class="req">*</span></label>
+          <select id="eventCategory" required>
+            <option value="" disabled selected>اختر التصنيف...</option>
+            <option>🧹 تنظيف</option>
+            <option>🌱 زراعة</option>
+            <option>♻️ إعادة تدوير</option>
+            <option>📢 توعية</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="eventDesc">وصف الفعالية <span class="req">*</span></label>
+          <textarea id="eventDesc" placeholder="اشرحي تفاصيل الفعالية وشروط المشاركة..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>صورة الفعالية</label>
+          <div class="image-upload-wrapper" onclick="document.getElementById('imgInput').click()">
+            <div class="upload-icon">📸</div>
+            <div style="font-size: .85rem; color: #6b7280;">اضغطي لرفع صورة تعبيرية للفعالية</div>
+            <input type="file" id="imgInput" hidden accept="image/*" onchange="previewImg(this)">
+            <div class="preview-container"><img id="viewImg" src="#" /></div>
+          </div>
+        </div>
+
+        <div class="section-divider">التاريخ والموقع</div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="eventDate">تاريخ الفعالية <span class="req">*</span></label>
+            <input type="date" id="eventDate" required/>
+          </div>
+          <div class="form-group">
+            <label for="targetAge">الفئة العمرية</label>
+            <select id="targetAge">
+              <option>الجميع</option>
+              <option>أطفال</option>
+              <option>بالغون</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label for="startTime">وقت البداية</label>
+            <input type="time" id="startTime" onchange="calcHours()"/>
+          </div>
+          <div class="form-group">
+            <label for="endTime">وقت النهاية</label>
+            <input type="time" id="endTime" onchange="calcHours()"/>
+          </div>
+          <div class="form-group">
+            <label>ساعات التطوع</label>
+            <input type="number" id="volunteerHours" value="0" readonly style="background:#f3f4f6;"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="eventLocation">الموقع بالتفصيل <span class="req">*</span></label>
+          <input type="text" id="eventLocation" placeholder="المدينة، الحي، الحديقة أو المركز" required/>
+        </div>
+
+        <div class="form-group">
+          <label for="contactNo">رقم التواصل </label>
+          <input type="tel" id="contactNo" placeholder="05xxxxxxxx"/>
+        </div>
+
+        <div class="section-divider">الإعدادات الإضافية</div>
+
+        <div class="toggle-row" style="margin-bottom:.9rem">
+          <div>
+            <div style="font-size: .9rem; font-weight: 600; color: #374151;">🏅 منح شهادة حضور</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="certAvailable"/>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>نقاط المشاركة</label>
+          <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+            <button type="button" class="pts-opt" data-val="5" onclick="selectPoints(this)">5 نقاط</button>
+            <button type="button" class="pts-opt" data-val="10" onclick="selectPoints(this)">10 نقاط</button>
+            <button type="button" class="pts-opt active" data-val="15" onclick="selectPoints(this)">15 نقطة</button>
+          </div>
+          <input type="hidden" id="eventPoints" value="15"/>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <a href="organized-events.html" style="text-decoration:none; color:#6b7280; font-size:.9rem; margin-left:auto;">إلغاء</a>
+        <button type="submit" class="btn-submit-custom">
+          إرسال للمراجعة
+        </button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<script>
+  // وظيفة معاينة الصورة
+  function previewImg(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        const img = document.getElementById('viewImg');
+        img.src = e.target.result;
+        img.style.display = 'block';
+      }
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  // حساب ساعات التطوع تلقائياً
+  function calcHours() {
+    const s = document.getElementById('startTime').value;
+    const e = document.getElementById('endTime').value;
+    if (s && e && e > s) {
+      const diff = (new Date('2000-01-01T'+e) - new Date('2000-01-01T'+s)) / 3600000;
+      document.getElementById('volunteerHours').value = Math.round(diff*10)/10;
+    }
+  }
+
+  function selectPoints(btn) {
+    document.querySelectorAll('.pts-opt').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('eventPoints').value = btn.dataset.val;
+  }
+
+  function submitToAdmin() {
+    alert("تم استلام طلبك! فعاليتك الآن 'تحت المراجعة' وسيقوم المشرف باعتمادها قريباً.");
+    window.location.href = 'organized-events.html';
+  }
+</script>
+
+</body>
+</html>
