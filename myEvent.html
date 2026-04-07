@@ -6,6 +6,42 @@
   <title>نفل - فعالياتي</title>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="styles.css"/>
+  <style>
+    header { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 50; }
+    .header-inner { max-width: 1200px; margin: 0 auto; padding: .75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+ 
+    .brand { display:flex; align-items:center; gap:.5rem; text-decoration:none; }
+    .brand img {
+      height: 52px; width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(45,106,53,0.2));
+    }
+ 
+    .header-right { display:flex; align-items:center; gap:.85rem; }
+ 
+    /* User chip */
+    .user-chip { display:flex; align-items:center; gap:.55rem; background:#f0fdf4; border:1.5px solid #bbf7d0; padding:.42rem .95rem; border-radius:99px; }
+    .user-avatar { width:30px; height:30px; border-radius:50%; background:#2d6a35; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.88rem; flex-shrink:0; }
+    .user-name { font-weight:600; font-size:.9rem; color:#1e4d25; }
+ 
+    /* Badge */
+    .badge-widget { display:flex; align-items:center; gap:.55rem; background:#fafafa; border:1px solid #e5e7eb; padding:.45rem .85rem; border-radius:.75rem; }
+    .badge-info { text-align:right; }
+    .badge-name { font-size:.8rem; font-weight:600; }
+    .badge-pts { font-size:.73rem; color:#6b7280; margin-top:.1rem; }
+    .progress-wrap { width:88px; height:5px; background:#e5e7eb; border-radius:99px; overflow:hidden; margin-top:.3rem; }
+    .progress-bar { height:100%; border-radius:99px; }
+ 
+    .btn-logout { display:flex; align-items:center; gap:.3rem; color:#dc2626; background:none; border:none; font-family:inherit; font-size:.86rem; font-weight:500; cursor:pointer; padding:.42rem .75rem; border-radius:.55rem; transition:background .2s; white-space:nowrap; }
+    .btn-logout:hover { background:#fef2f2; }
+ 
+    /* Nav links */
+    .nav-links { display:flex; align-items:center; gap:.4rem; }
+    .nav-link { display:flex; align-items:center; gap:.38rem; text-decoration:none; color:#374151; font-size:.86rem; font-weight:500; padding:.42rem .85rem; border-radius:.55rem; transition:background .2s, color .2s, border-color .2s; white-space:nowrap; border:1.5px solid transparent; }
+    .nav-link:hover { background:#f0fdf4; color:#2d6a35; border-color:#bbf7d0; }
+    .nav-link svg { flex-shrink:0; }
+    @media(max-width:768px){ .nav-link span { display:none; } .nav-link { padding:.42rem .55rem; } }
+ </style>
 </head>
 <body>
 
