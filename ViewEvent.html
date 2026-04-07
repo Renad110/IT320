@@ -9,10 +9,18 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: #f5f7f0; min-height: 100vh; color: #1f2937; }
  
-    header { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-    .header-inner { max-width: 900px; margin: 0 auto; padding: .75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+    header { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 50; }
+    .header-inner { max-width: 1200px; margin: 0 auto; padding: .75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+ 
     .brand { display:flex; align-items:center; gap:.5rem; text-decoration:none; }
-    .brand img { height:46px; width:auto; object-fit:contain; filter:drop-shadow(0 2px 8px rgba(45,106,53,0.2)); }
+    .brand img {
+      height: 52px; width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(45,106,53,0.2));
+    }
+ 
+    .header-right { display:flex; align-items:center; gap:.85rem; }
+  
     .header-left { display:flex; align-items:center; gap:.75rem; }
     .user-chip { display:flex; align-items:center; gap:.5rem; background:#f0fdf4; border:1.5px solid #bbf7d0; padding:.38rem .85rem; border-radius:99px; }
     .user-avatar { width:28px; height:28px; border-radius:50%; background:#2d6a35; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.83rem; }
