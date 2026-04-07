@@ -106,10 +106,6 @@ setTimeout(() => {
 toast.className = "toast";
 }, 2500);
 }
-
-/* =========================
-DATE HELPERS
-========================= */
 function isPast(dateStr) {
 const today = new Date();
 const eventDate = new Date(dateStr);
@@ -137,9 +133,6 @@ return true;
 return isToday(event.date);
 }
 
-/* =========================
-AUTO REGISTER FROM QUERY
-========================= */
 function autoRegisterFromQuery() {
 const params = new URLSearchParams(window.location.search);
 const eventId = parseInt(params.get("id"));
@@ -164,16 +157,10 @@ showToast("تم التسجيل في الفعالية بنجاح", "success");
 window.history.replaceState({}, document.title, "myEvent.html");
 }
 
-/* =========================
-STATIC CODE
-========================= */
 function getGeneratedCodeForEvent(eventId) {
 return EVENT_CODES[eventId] || null;
 }
 
-/* =========================
-STATUS / TABS
-========================= */
 function getStatusLabel(event) {
 if (event.attended) return "مكتملة";
 if (isPast(event.date) && !isEventActiveToday(event)) return "سابقة";
@@ -196,46 +183,66 @@ return events.filter(event => (!isPast(event.date) || isEventActiveToday(event))
 CERTIFICATE
 ========================= */
 function getCertificateHTML(event) {
-return `
-<div class="certificate">
-<div class="cert-border">
-<div class="cert-top-pattern"></div>
+  return `
+    <div class="certificate-page">
+      <div class="certificate-shell">
 
-<img src="logo.jpg" class="cert-logo" alt="نفل"/>
+        <div class="cert-top-strip"></div>
 
-<p class="cert-small">منصة الفعاليات البيئية</p>
+        <div class="cert-header">
+          <img src="logo.jpg" class="cert-logo" alt="نفل" />
+          <div class="cert-header-text">
+            <p class="cert-platform">منصة نفل البيئية</p>
+            <h1 class="cert-main-title">شهادة مشاركة</h1>
+            <p class="cert-subtitle">Environmental Participation Certificate</p>
+          </div>
+        </div>
 
-<h2 class="cert-title">شهادة مشاركة</h2>
+        <div class="cert-body">
+          <p class="cert-intro">تتشرف منصة نفل البيئية بمنح هذه الشهادة إلى</p>
 
-<p class="cert-text">يسر منصة نفل البيئية أن تشهد بأن</p>
+          <h2 class="cert-user-name">سارة الغامدي</h2>
 
-<h1 class="cert-name">${USER_NAME}</h1>
+          <p class="cert-mid-text">تقديرًا لمشاركتها الفاعلة في فعالية</p>
 
-<p class="cert-text">قد شاركت في فعالية</p>
+          <h3 class="cert-event-name">${event.title}</h3>
 
-<h3 class="cert-event">${event.title}</h3>
+          <div class="cert-info-grid">
+            <div class="cert-info-box">
+              <span class="cert-info-label">التاريخ</span>
+              <span class="cert-info-value">${event.date}</span>
+            </div>
 
-<p class="cert-date">بتاريخ ${event.date}</p>
+            <div class="cert-info-box">
+              <span class="cert-info-label">الجهة</span>
+              <span class="cert-info-value">منصة نفل البيئية</span>
+            </div>
 
-<div class="cert-divider"></div>
+            <div class="cert-info-box">
+              <span class="cert-info-label">نوع الشهادة</span>
+              <span class="cert-info-value">شهادة مشاركة</span>
+            </div>
+          </div>
 
-<div class="cert-footer-row">
-<div class="signature">
-<div class="line"></div>
-<span>إدارة منصة نفل</span>
-</div>
+          <div class="cert-message-box">
+            نشكرك على مساهمتك في دعم المبادرات البيئية والمشاركة في بناء مجتمع أكثر وعيًا واستدامة.
+          </div>
+        </div>
 
-<div class="cert-badge">
-🌿 مشاركة بيئية معتمدة
-</div>
-</div>
+        <div class="cert-footer">
+          <div class="cert-signature-block">
+            <div class="cert-sign-line"></div>
+            <span>إدارة منصة نفل</span>
+          </div>
 
-<button onclick="printCertificate(this)" class="btn-print">
-طباعة الشهادة
-</button>
-</div>
-</div>
-`;
+          <div class="cert-badge">
+            🌿 مشاركة بيئية معتمدة
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
 }
 
 function printCertificate(btn) {
@@ -388,14 +395,11 @@ RENDER ACTIONS
 ========================= */
 function renderActions(event) {
 if (event.attended) {
-return `
-<div class="actions">
-<button class="btn btn-soft" onclick="toggleCertificate(${event.id})">عرض الشهادة</button>
-<div class="certificate-box" id="certificate-${event.id}" style="display:none;">
-${getCertificateHTML(event)}
-</div>
-</div>
-`;
+  return `
+    <div class="actions">
+      <button class="btn btn-soft" onclick="toggleCertificate(${event.id})">عرض الشهادة</button>
+    </div>
+  `;
 }
 
 const attendanceCode = getGeneratedCodeForEvent(event.id);
@@ -545,11 +549,298 @@ showToast("تم تأكيد الحضور بنجاح", "success");
 }
 
 function toggleCertificate(eventId) {
-const certificateBox = document.getElementById(`certificate-${eventId}`);
-if (!certificateBox) return;
+  const myEvents = getStoredMyEvents();
+  const event = myEvents.find(e => e.id === eventId);
+  if (!event) return;
 
-certificateBox.style.display =
-certificateBox.style.display === "none" ? "block" : "none";
+  const certificateHTML = getCertificateHTML(event);
+
+  const newTab = window.open("", "_blank");
+  if (!newTab) return;
+
+  newTab.document.write(`
+    <html lang="ar" dir="rtl">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>شهادة مشاركة - ${event.title}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+        <style>
+          body {
+            margin: 0;
+            font-family: 'Tajawal', sans-serif;
+            background:
+              radial-gradient(circle at top right, rgba(45,106,53,0.08), transparent 18%),
+              radial-gradient(circle at bottom left, rgba(125,184,138,0.12), transparent 20%),
+              linear-gradient(180deg, #f7faf8 0%, #eef6f0 100%);
+            min-height: 100vh;
+            padding: 32px;
+            color: #1f2937;
+          }
+
+          .certificate-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 64px);
+          }
+
+          .certificate-shell {
+            width: 100%;
+            max-width: 1100px;
+            background: linear-gradient(180deg, #ffffff 0%, #fbfdfb 100%);
+            border: 4px solid #cfe5d4;
+            border-radius: 32px;
+            box-shadow: 0 24px 60px rgba(25, 58, 37, 0.14);
+            overflow: hidden;
+            position: relative;
+          }
+
+          .cert-top-strip {
+            height: 18px;
+            background: linear-gradient(90deg, #1e4d25, #4d8f60, #b99a3a, #4d8f60, #1e4d25);
+          }
+
+          .cert-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+            padding: 42px 42px 20px;
+            flex-wrap: wrap;
+            text-align: center;
+          }
+
+          .cert-logo {
+            width: 120px;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 14px rgba(0,0,0,0.08));
+          }
+
+          .cert-platform {
+            color: #6b7280;
+            font-size: 1rem;
+            margin: 0 0 8px;
+          }
+
+          .cert-main-title {
+            margin: 0;
+            font-size: 2.6rem;
+            color: #1e4d25;
+            font-weight: 800;
+            letter-spacing: .01em;
+          }
+
+          .cert-subtitle {
+            margin: 10px 0 0;
+            color: #8a948f;
+            font-size: 1rem;
+          }
+
+          .cert-body {
+            padding: 10px 60px 30px;
+            text-align: center;
+          }
+
+          .cert-intro,
+          .cert-mid-text {
+            font-size: 1.15rem;
+            color: #58635f;
+            margin: 14px 0;
+            line-height: 1.9;
+          }
+
+          .cert-user-name {
+            font-size: 3rem;
+            color: #1f5c32;
+            font-weight: 800;
+            margin: 18px auto;
+            display: inline-block;
+            padding: 0 18px 8px;
+            border-bottom: 4px solid #d8b44c;
+          }
+
+          .cert-event-name {
+            font-size: 1.8rem;
+            color: #1f2937;
+            font-weight: 700;
+            margin: 14px 0 24px;
+          }
+
+          .cert-info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin: 28px 0 24px;
+          }
+
+          .cert-info-box {
+            background: #f6faf7;
+            border: 1px solid #d9e8dc;
+            border-radius: 18px;
+            padding: 18px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+          }
+
+          .cert-info-label {
+            font-size: .9rem;
+            color: #7b8580;
+          }
+
+          .cert-info-value {
+            font-size: 1.05rem;
+            color: #1f2937;
+            font-weight: 700;
+          }
+
+          .cert-message-box {
+            background: linear-gradient(135deg, #f2f9f4, #f9fcfa);
+            border: 1px dashed #b8d8bf;
+            border-radius: 22px;
+            padding: 22px;
+            font-size: 1rem;
+            line-height: 2;
+            color: #42514a;
+            margin-top: 10px;
+          }
+
+          .cert-footer {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 0 60px 42px;
+            flex-wrap: wrap;
+          }
+
+          .cert-signature-block {
+            text-align: center;
+          }
+
+          .cert-sign-line {
+            width: 220px;
+            height: 2px;
+            background: #1e4d25;
+            margin: 0 auto 10px;
+          }
+
+          .cert-signature-block span {
+            color: #374151;
+            font-size: 1rem;
+            font-weight: 600;
+          }
+
+          .cert-badge {
+            background: linear-gradient(135deg, #edf7ef, #f8fcf8);
+            color: #245331;
+            border: 1px solid #cfe5d4;
+            border-radius: 999px;
+            padding: 12px 18px;
+            font-size: .95rem;
+            font-weight: 700;
+          }
+
+          .cert-actions {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            padding: 0 24px 34px;
+            flex-wrap: wrap;
+          }
+
+          .cert-btn {
+            border: none;
+            border-radius: 14px;
+            padding: 14px 24px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s ease;
+          }
+
+          .cert-btn-print {
+            background: linear-gradient(135deg, #2d6a35, #1e4d25);
+            color: white;
+          }
+
+          .cert-btn-print:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(30, 77, 37, 0.2);
+          }
+
+          .cert-btn-close {
+            background: #f3f4f6;
+            color: #374151;
+          }
+
+          .cert-btn-close:hover {
+            background: #e5e7eb;
+          }
+
+          @media print {
+            body {
+              background: #fff;
+              padding: 0;
+            }
+
+            .cert-actions {
+              display: none !important;
+            }
+
+            .certificate-page {
+              min-height: auto;
+            }
+
+            .certificate-shell {
+              box-shadow: none;
+              border-width: 3px;
+              max-width: 100%;
+            }
+          }
+
+          @media (max-width: 768px) {
+            body {
+              padding: 16px;
+            }
+
+            .cert-main-title {
+              font-size: 2rem;
+            }
+
+            .cert-user-name {
+              font-size: 2.2rem;
+            }
+
+            .cert-body {
+              padding: 10px 22px 24px;
+            }
+
+            .cert-footer {
+              padding: 0 22px 28px;
+            }
+
+            .cert-info-grid {
+              grid-template-columns: 1fr;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        ${certificateHTML}
+
+        <div class="cert-actions">
+          <button class="cert-btn cert-btn-print" onclick="window.print()">طباعة الشهادة</button>
+          <button class="cert-btn cert-btn-close" onclick="window.close()">إغلاق</button>
+        </div>
+      </body>
+    </html>
+  `);
+
+  newTab.document.close();
 }
 
 /* =========================
@@ -575,9 +866,6 @@ renderEvents();
 });
 }
 
-/* =========================
-INIT
-========================= */
 document.addEventListener("DOMContentLoaded", () => {
 autoRegisterFromQuery();
 setupTabs();
