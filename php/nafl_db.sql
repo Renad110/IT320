@@ -26,16 +26,17 @@ CREATE TABLE `users` (
 
 -- 12 مستخدم تجريبي (كلمة المرور للجميع: 123456)
 INSERT INTO `users` (`user_id`, `full_name`, `email`, `password`, `age`, `phone`, `total_points`, `profile_image_path`, `is_admin`) VALUES
-(1,  'سارة الغامدي',     'sara@gmail.com',     '123456', 24, '0501111111', 72,  'sarah.jpeg',    0),
-(2,  'محمد العتيبي',      'mohammed@gmail.com', '123456', 30, '0502222222', 120, 'muhammad.jpeg', 1),
-(3,  'نورة الشمري',       'norah@gmail.com',    '123456', 27, '0503333333', 95,  'norah.jpeg',    1),
-(4,  'فهد الدوسري',       'fahad@gmail.com',    '123456', 33, '0504444444', 80,  'fahad.jpeg',    1),
-(5,  'ريم القحطاني',      'reem@gmail.com',     '123456', 26, '0505555555', 60,  'reeem.jpeg',    1),
-(6,  'عبدالله الزهراني',  'abdullah@gmail.com', '123456', 35, '0506666666', 145, NULL,            1),
+(1,  'سارة الغامدي',     'sara@gmail.com',     '123456', 24, '0501111111', 72,  'php\sarah.jpeg',    0),
+(2,  'محمد العتيبي',      'mohammed@gmail.com', '123456', 30, '0502222222', 120, 'php\muhammad.jpeg', 0),
+(3,  'نورة الشمري',       'norah@gmail.com',    '123456', 27, '0503333333', 95,  'php\norah.jpeg',    0),
+(4,  'فهد الدوسري',       'fahad@gmail.com',    '123456', 33, '0504444444', 80,  'php\fahad.jpeg',    0),
+(5,  'ريم القحطاني',      'reem@gmail.com',     '123456', 26, '0505555555', 60,  'php\reeem.jpeg',    0),
+(6,  'عبدالله الزهراني',  'abdullah@gmail.com', '123456', 35, '0506666666', 145, NULL,            0),
 (7,  'منال الحربي',       'manal@gmail.com',    '123456', 22, '0507777777', 35,  NULL,            0),
 (8,  'خالد السبيعي',      'khalid@gmail.com',   '123456', 29, '0508888888', 50,  NULL,            0),
     (9,  'لمى الرشيد',        'lama@gmail.com',     '123456', 19, '0509999999', 25,  NULL,            0),
-(10, 'يوسف العمري',       'youssef@gmail.com',  '123456', 28, '0501212121', 105, NULL,            1),
+(10, 'يوسف العمري',       'youssef@gmail.com',  '123456', 28, '0501212121', 105, NULL,            0
+  ),
 (11, 'هند الصالح',        'hind@gmail.com',     '123456', 31, '0501313131', 90,  NULL,            0),
 (12, 'مدير النظام',       'admin@gmail.com',    '123456', 40, '0500000000', 0,   NULL,            1);
 
