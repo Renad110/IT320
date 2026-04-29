@@ -81,6 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$description) $errors[] = 'وصف الفعالية مطلوب';
     if (!$eventDate)   $errors[] = 'التاريخ مطلوب';
     if (!$location)    $errors[] = 'الموقع مطلوب';
+    if ($startTime && $endTime && $endTime <= $startTime) $errors[] = 'وقت النهاية يجب أن يكون بعد وقت البداية';
+    if ($contact && !preg_match('/^05\d{8}$/', $contact)) $errors[] = 'رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام';
 
     if (empty($errors)) {
         $upd = $conn->prepare(
@@ -399,6 +401,29 @@ $pointsOptions = [5, 8, 10, 15, 20];
     btn.classList.add('active');
     document.getElementById('eventPoints').value = btn.dataset.val;
   }
+
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const start   = document.getElementById('startTime').value;
+    const end     = document.getElementById('endTime').value;
+    const contact = document.querySelector('input[name="contact"]').value.trim();
+    const msgs    = [];
+
+    if (start && end && end <= start) msgs.push('وقت النهاية يجب أن يكون بعد وقت البداية');
+    if (contact && !/^05\d{8}$/.test(contact)) msgs.push('رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام');
+
+    if (msgs.length > 0) {
+      e.preventDefault();
+      let box = document.getElementById('jsErrorBox');
+      if (!box) {
+        box = document.createElement('div');
+        box.id = 'jsErrorBox';
+        box.className = 'error-box';
+        document.querySelector('.form-body').prepend(box);
+      }
+      box.innerHTML = msgs.map(m => '<div>• ' + m + '</div>').join('');
+      box.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
 </script>
 
 </body>
