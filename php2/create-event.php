@@ -59,6 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$eventDate)   $errors[] = 'تاريخ الفعالية مطلوب';
     if (!$location)    $errors[] = 'الموقع مطلوب';
     if ($eventDate && $eventDate < date('Y-m-d')) $errors[] = 'تاريخ الفعالية لا يمكن أن يكون في الماضي';
+    if ($startTime && $endTime && $endTime <= $startTime) $errors[] = 'وقت النهاية يجب أن يكون بعد وقت البداية';
+    if ($contact && !preg_match('/^05\d{8}$/', $contact)) $errors[] = 'رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام';
 
     // رفع الصورة
     $imagePath = null;
