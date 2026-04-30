@@ -339,7 +339,12 @@ return 'قادمة';
 }
 
 function isActiveNow($event) {
-return $event['event_date'] === date('Y-m-d');
+    $now = date('Y-m-d H:i:s');
+
+    $startDateTime = $event['event_date'] . ' ' . $event['start_time'];
+    $endDateTime   = $event['event_date'] . ' ' . $event['end_time'];
+
+    return ($now >= $startDateTime && $now <= $endDateTime);
 }
 ?>
 <!DOCTYPE html>
