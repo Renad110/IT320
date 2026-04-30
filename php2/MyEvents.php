@@ -474,7 +474,7 @@ header{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08);position:sticky;top:
 <div class="hero-inner">
 <div class="hero-greeting">مرحباً يا <?= htmlspecialchars(explode(' ', $userName)[0]) ?> 👋</div>
 <h2>فعالياتي</h2>
-<p>تابعي الفعاليات المسجلة فيها، أكدي حضورك، واستعرضي شهاداتك</p>
+<p>تابع الفعاليات المسجل فيها، أكد حضورك، واستعرض شهاداتك</p>
 </div>
 </section>
 
@@ -493,7 +493,7 @@ header{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08);position:sticky;top:
 <?php if (empty($events)): ?>
 <div class="empty-state">
 <h3>ما عندك فعاليات هنا</h3>
-<p>سجلي في فعالية من الصفحة الرئيسية وبتظهر لك هنا</p>
+<p>سجل في فعالية من الصفحة الرئيسية وبتظهر لك هنا</p>
 </div>
 <?php else: ?>
 <div class="events-grid">
