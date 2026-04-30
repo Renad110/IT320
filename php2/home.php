@@ -37,16 +37,16 @@ $selectedCat = $_GET['cat']    ?? 'الكل';
 $searchTerm  = trim($_GET['q'] ?? '');
 $showMode    = $_GET['show']   ?? 'upcoming';  // upcoming = قادمة | expired = منتهية
 
-$sql = "SELECT e.event_id, e.title, e.category, e.event_date, e.location, e.points, e.image_path,
+$sql = "SELECT e.event_id, e.title, e.category, e.event_date, e.end_time, e.location, e.points, e.image_path,
                (SELECT COUNT(*) FROM registrations r WHERE r.event_id = e.event_id) AS participants
         FROM events e
         WHERE e.status = 'Approved'";
 
-// فلتر التاريخ بناءً على وضع العرض
+// فلتر التاريخ والوقت بناءً على وضع العرض
 if ($showMode === 'expired') {
-    $sql .= " AND e.event_date < CURDATE()";
+    $sql .= " AND TIMESTAMP(e.event_date, e.end_time) < NOW()";
 } else {
-    $sql .= " AND e.event_date >= CURDATE()";
+    $sql .= " AND TIMESTAMP(e.event_date, e.end_time) >= NOW()";
 }
 
 $params = [];
@@ -124,8 +124,7 @@ $stmt->close();
     .cat-btn:hover { background:#e5e7eb; }
     .cat-btn.active { background:#2d6a35; color:#fff; }
 
-    /* فاصل وزر المنتهية */
-    .cat-divider { width:1px; height:22px; background:#d1d5db; margin:0 .25rem; }
+    /* زر المنتهية بستايل مميز */
     .cat-btn-expired { background:#fef2f2; color:#991b1b; border:1.5px solid #fecaca; padding:.32rem .85rem; }
     .cat-btn-expired:hover { background:#fee2e2; }
     .cat-btn-expired.active { background:#991b1b; color:#fff; border-color:#991b1b; }
@@ -136,6 +135,7 @@ $stmt->close();
     .event-card.expired .event-img { filter:grayscale(40%); }
     .expired-overlay { position:absolute; top:.7rem; right:.7rem; background:rgba(75,85,99,0.95); color:#fff; padding:.3rem .8rem; border-radius:99px; font-size:.78rem; font-weight:600; z-index:2; backdrop-filter:blur(4px); }
     .event-img { width:100%; height:182px; object-fit:cover; display:block; }
+    .event-img-placeholder { width:100%; height:182px; background:linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); display:flex; align-items:center; justify-content:center; font-size:3.5rem; }
     .event-body { padding:1.1rem; }
     .event-meta { display:flex; align-items:center; justify-content:space-between; margin-bottom:.65rem; }
     .cat-tag { background:#dcfce7; color:#166534; padding:.2rem .7rem; border-radius:99px; font-size:.78rem; font-weight:500; }
@@ -178,15 +178,11 @@ $stmt->close();
         </div>
       </div>
       <div class="nav-links">
-        <a href="home.php" class="nav-link active">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          <span>الرئيسية</span>
-        </a>
-        <a href="MyEvents.php" class="nav-link">
+        <a href="MyEvent.php" class="nav-link">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg>
           <span>فعالياتي</span>
         </a>
-        <a href="organized-events.php" class="nav-link">
+        <a href="MyOrganizedEvents.php" class="nav-link">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <span>فعالياتي المنظمة</span>
         </a>
@@ -216,35 +212,33 @@ $stmt->close();
     <div class="cats-label">التصنيفات</div>
     <div class="categories">
       <?php
-        $cats = ['الكل','تنظيف','زراعة','إعادة تدوير','توعية','معرض'];
-        $extra = ($searchTerm ? "&q=".urlencode($searchTerm) : "")
-               . ($showMode === 'expired' ? "&show=expired" : "");
+        $cats = ['الكل','تنظيف','زراعة','إعادة تدوير','توعية','معرض','منتهية'];
         foreach ($cats as $c) {
-            $active = ($selectedCat === $c) ? 'active' : '';
-            $url = "home.php?cat=" . urlencode($c) . $extra;
-            echo "<a class='cat-btn $active' href='$url'>$c</a>";
-        }
-      ?>
+            $isActive = ($c === 'منتهية' && $showMode === 'expired')
+                     || ($c !== 'منتهية' && $showMode !== 'expired' && $selectedCat === $c);
+            $active = $isActive ? 'active' : '';
 
-      <span class="cat-divider"></span>
-
-      <?php
-        // زر التبديل بين القادمة والمنتهية
-        if ($showMode === 'expired') {
-            $toggleUrl = "home.php?cat=" . urlencode($selectedCat) . ($searchTerm ? "&q=".urlencode($searchTerm) : "");
-            echo "<a class='cat-btn-expired cat-btn active' href='$toggleUrl'>📅 الفعاليات القادمة</a>";
-        } else {
-            $toggleUrl = "home.php?cat=" . urlencode($selectedCat) . ($searchTerm ? "&q=".urlencode($searchTerm) : "") . "&show=expired";
-            echo "<a class='cat-btn-expired cat-btn' href='$toggleUrl'>⏰ الفعاليات المنتهية</a>";
+            // الرابط: لو "منتهية" يستخدم show=expired، غير ذلك يستخدم cat
+            if ($c === 'منتهية') {
+                $url = "home.php?show=expired" . ($searchTerm ? "&q=".urlencode($searchTerm) : "");
+                $extraClass = 'cat-btn-expired';
+                $label = '⏰ منتهية';
+            } else {
+                $url = "home.php?cat=" . urlencode($c) . ($searchTerm ? "&q=".urlencode($searchTerm) : "");
+                $extraClass = '';
+                $label = $c;
+            }
+            echo "<a class='cat-btn $extraClass $active' href='$url'>$label</a>";
         }
       ?>
     </div>
 
-    <!-- إخفاء حالة العرض في الفورم عند البحث -->
+    <!-- حقول مخفية للحفاظ على الفلتر عند البحث -->
     <?php if ($showMode === 'expired'): ?>
       <input type="hidden" name="show" value="expired"/>
+    <?php else: ?>
+      <input type="hidden" name="cat" value="<?= htmlspecialchars($selectedCat) ?>"/>
     <?php endif; ?>
-    <input type="hidden" name="cat" value="<?= htmlspecialchars($selectedCat) ?>"/>
   </form>
 
   <div class="events-grid">
@@ -253,13 +247,17 @@ $stmt->close();
     <?php else: ?>
       <?php foreach ($events as $e):
         $catAr = $catMapAr[$e['category']] ?? $e['category'];
-        $img = $e['image_path'] ?: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&q=80';
+        $hasImage = !empty($e['image_path']);
       ?>
         <a class="event-card <?= $showMode === 'expired' ? 'expired' : '' ?>" href="ViewEvent.php?id=<?= $e['event_id'] ?>">
           <?php if ($showMode === 'expired'): ?>
-            <span class="expired-overlay">⏰ منتهية</span>
+            <span class="expired-overlay">⏰ الفعاليات المنتهية</span>
           <?php endif; ?>
-          <img class="event-img" src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($e['title']) ?>" loading="lazy"/>
+          <?php if ($hasImage): ?>
+            <img class="event-img" src="<?= htmlspecialchars($e['image_path']) ?>" alt="<?= htmlspecialchars($e['title']) ?>" loading="lazy"/>
+          <?php else: ?>
+            <div class="event-img-placeholder">🌱</div>
+          <?php endif; ?>
           <div class="event-body">
             <div class="event-meta">
               <span class="cat-tag"><?= htmlspecialchars($catAr) ?></span>
@@ -293,3 +291,5 @@ $stmt->close();
 
 </body>
 </html>
+
+
