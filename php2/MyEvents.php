@@ -4,6 +4,8 @@ ini_set('display_errors', 1);
 
 session_start();
 require 'db_connect.php';
+date_default_timezone_set('Asia/Riyadh');
+$conn->query("SET time_zone = '+03:00'");
 
 if (!isset($_SESSION['user_id'])) {
 header("Location: login.php");
@@ -290,18 +292,31 @@ LEFT JOIN certificates c ON c.registration_id = r.registration_id
 WHERE r.user_id = ?
 ";
 
+$nowDateTime = date('Y-m-d H:i:s');
+
 if ($tab === 'completed') {
-$sql .= " AND r.attendance_status = 'Attended'";
+    $sql .= " AND r.attendance_status = 'Attended'";
 } elseif ($tab === 'past') {
-$sql .= " AND r.attendance_status = 'Registered' AND e.event_date < CURDATE()";
+    $sql .= " 
+        AND r.attendance_status = 'Registered'
+        AND CONCAT(e.event_date, ' ', e.end_time) < ?
+    ";
 } else {
-$sql .= " AND r.attendance_status = 'Registered' AND e.event_date >= CURDATE()";
+    $sql .= " 
+        AND r.attendance_status = 'Registered'
+        AND CONCAT(e.event_date, ' ', e.end_time) >= ?
+    ";
 }
 
 $sql .= " ORDER BY e.event_date ASC, e.start_time ASC";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $userId);
+
+if ($tab === 'completed') {
+    $stmt->bind_param("i", $userId);
+} else {
+    $stmt->bind_param("is", $userId, $nowDateTime);
+}
 $stmt->execute();
 $events = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
@@ -340,9 +355,8 @@ return 'قادمة';
 
 function isActiveNow($event) {
     $now = date('Y-m-d H:i:s');
-
     $startDateTime = $event['event_date'] . ' ' . $event['start_time'];
-    $endDateTime   = $event['event_date'] . ' ' . $event['end_time'];
+    $endDateTime = $event['event_date'] . ' ' . $event['end_time'];
 
     return ($now >= $startDateTime && $now <= $endDateTime);
 }
