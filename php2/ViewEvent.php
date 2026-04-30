@@ -14,17 +14,17 @@ $eventId = (int)($_GET['id'] ?? 1);
 $message = '';
 $msgType = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
-    // فحص بيانات الفعالية: التاريخ + المنظم
-    $checkEvent = $conn->prepare("SELECT event_date, created_by_user_id FROM events WHERE event_id = ?");
+    // فحص بيانات الفعالية: التاريخ + وقت الانتهاء + المنظم
+    $checkEvent = $conn->prepare("SELECT event_date, end_time, created_by_user_id FROM events WHERE event_id = ?");
     $checkEvent->bind_param("i", $eventId);
     $checkEvent->execute();
     $evRow = $checkEvent->get_result()->fetch_assoc();
     $checkEvent->close();
 
-    $eventDate = $evRow['event_date'] ?? null;
+    $eventEndTs = ($evRow ? strtotime($evRow['event_date'] . ' ' . $evRow['end_time']) : 0);
     $organizerId = (int)($evRow['created_by_user_id'] ?? 0);
 
-    if ($eventDate && $eventDate < date('Y-m-d')) {
+    if ($eventEndTs && $eventEndTs < time()) {
         $message = '❌ لا يمكن التسجيل، هذه الفعالية انتهت';
         $msgType = 'err';
     } elseif ($organizerId === (int)$uid) {
@@ -84,8 +84,9 @@ $regCheck->execute();
 $alreadyRegistered = $regCheck->get_result()->num_rows > 0;
 $regCheck->close();
 
-// ✅ تحقق إذا الفعالية منتهية
-$isExpired = ($ev['event_date'] < date('Y-m-d'));
+// ✅ تحقق إذا الفعالية منتهية (التاريخ + وقت الانتهاء)
+$eventEndDateTime = $ev['event_date'] . ' ' . $ev['end_time'];
+$isExpired = (strtotime($eventEndDateTime) < time());
 
 // ✅ تحقق إذا المستخدم هو منظم الفعالية
 $isOrganizer = ((int)$ev['created_by_user_id'] === (int)$uid);
@@ -101,6 +102,14 @@ $orgImg  = $ev['organizer_image'];
 $initials = mb_substr(trim($orgName), 0, 1, 'UTF-8');
 
 $userInitial = mb_substr($_SESSION['full_name'], 0, 1, 'UTF-8');
+
+// جلب صورة المستخدم الحالي
+$myImgQ = $conn->prepare("SELECT profile_image_path FROM users WHERE user_id = ?");
+$myImgQ->bind_param("i", $uid);
+$myImgQ->execute();
+$myImgRes = $myImgQ->get_result()->fetch_assoc();
+$myImg = $myImgRes['profile_image_path'] ?? null;
+$myImgQ->close();
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -119,7 +128,8 @@ $userInitial = mb_substr($_SESSION['full_name'], 0, 1, 'UTF-8');
     .brand img { height: 52px; width: auto; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(45,106,53,0.2)); }
     .header-left { display:flex; align-items:center; gap:.75rem; }
     .user-chip { display:flex; align-items:center; gap:.5rem; background:#f0fdf4; border:1.5px solid #bbf7d0; padding:.38rem .85rem; border-radius:99px; }
-    .user-avatar { width:28px; height:28px; border-radius:50%; background:#2d6a35; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.83rem; }
+    .user-avatar { width:28px; height:28px; border-radius:50%; background:#2d6a35; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.83rem; overflow:hidden; flex-shrink:0; }
+    .user-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
     .user-name { font-weight:600; font-size:.87rem; color:#1e4d25; }
     .btn-back { display:flex; align-items:center; gap:.3rem; color:#2d6a35; background:none; border:none; font-family:inherit; font-size:.88rem; font-weight:500; cursor:pointer; padding:.4rem .8rem; border-radius:.55rem; text-decoration:none; transition:background .2s; }
     .btn-back:hover { background:#f0fdf4; }
@@ -203,7 +213,13 @@ $userInitial = mb_substr($_SESSION['full_name'], 0, 1, 'UTF-8');
     </a>
     <div class="header-left">
       <div class="user-chip">
-        <div class="user-avatar"><?= htmlspecialchars($userInitial) ?></div>
+        <div class="user-avatar">
+          <?php if ($myImg && file_exists($myImg)): ?>
+            <img src="<?= htmlspecialchars($myImg) ?>" alt="<?= htmlspecialchars($_SESSION['full_name']) ?>"/>
+          <?php else: ?>
+            <?= htmlspecialchars($userInitial) ?>
+          <?php endif; ?>
+        </div>
         <span class="user-name"><?= htmlspecialchars($_SESSION['full_name']) ?></span>
       </div>
       <a href="home.php" class="btn-back">
@@ -224,13 +240,15 @@ $userInitial = mb_substr($_SESSION['full_name'], 0, 1, 'UTF-8');
       <span class="icon">⏰</span>
       <div class="text">
         <strong>هذه الفعالية انتهت</strong>
-        <small>تاريخ الفعالية كان <?= htmlspecialchars($ev['event_date']) ?> — التفاصيل معروضة للقراءة فقط</small>
+        <small>انتهت في <?= htmlspecialchars($ev['event_date']) ?> الساعة <?= substr($ev['end_time'],0,5) ?> — التفاصيل معروضة للقراءة فقط</small>
       </div>
     </div>
   <?php endif; ?>
 
   <div class="detail-card">
-    <img class="hero-img" src="<?= htmlspecialchars($ev['image_path'] ?: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=900&q=80') ?>" alt="<?= htmlspecialchars($ev['title']) ?>" />
+    <?php if (!empty($ev['image_path'])): ?>
+      <img class="hero-img" src="<?= htmlspecialchars($ev['image_path']) ?>" alt="<?= htmlspecialchars($ev['title']) ?>" />
+    <?php endif; ?>
     <div class="card-body">
       <div class="top-meta">
         <span class="cat-tag"><?= htmlspecialchars($catAr) ?></span>
@@ -272,9 +290,8 @@ $userInitial = mb_substr($_SESSION['full_name'], 0, 1, 'UTF-8');
           <div><div class="info-label">الفئة المستهدفة</div><div class="info-value"><?= htmlspecialchars($ageAr) ?></div></div>
         </div>
         <div class="info-item">
-          <?php if ($orgImg): ?>
-            <img class="organizer-avatar" src="<?= htmlspecialchars($orgImg) ?>" alt="<?= htmlspecialchars($orgName) ?>" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-            <div class="organizer-avatar-fallback" style="display:none"><?= htmlspecialchars($initials) ?></div>
+          <?php if ($orgImg && file_exists($orgImg)): ?>
+            <img class="organizer-avatar" src="<?= htmlspecialchars($orgImg) ?>" alt="<?= htmlspecialchars($orgName) ?>" />
           <?php else: ?>
             <div class="organizer-avatar-fallback"><?= htmlspecialchars($initials) ?></div>
           <?php endif; ?>
