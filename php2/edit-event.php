@@ -137,7 +137,7 @@ $ageGroups = [
     'Adults'   => 'بالغون',
     'All'      => 'الجميع',
 ];
-$pointsOptions = [5, 8, 10, 15, 20];
+$pointsOptions = [5, 10, 15, 20];
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
